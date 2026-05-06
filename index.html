@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blueprint Bot · Atena · AL Odontología</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Geist', system-ui, sans-serif; font-feature-settings: 'cv11', 'ss01'; }
+    .font-mono { font-family: 'Geist Mono', ui-monospace, monospace; }
+    .serif-italic { font-family: 'Source Serif 4', Georgia, serif; font-style: italic; }
+    html { scroll-behavior: smooth; }
+    .grain::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; opacity: 0.012; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .toc-link { transition: color 0.15s, border-color 0.15s; }
+    .toc-link:hover { color: rgb(244 244 245); border-left-color: rgb(139 92 246); }
+    .toc-link.sub { padding-left: 28px; font-size: 12px; }
+    .diagram-card { background: rgba(9, 9, 11, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 24px; padding: 32px; }
+    .diagram-card svg { display: block; max-width: 100%; height: auto; }
+    .action-card { background: rgba(9, 9, 11, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 20px; position: relative; }
+    .action-card + .action-card { margin-top: 12px; }
+    .action-card .label { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 11px; color: rgb(113 113 122); }
+    .action-card .value-strong { color: rgb(228 228 231); font-weight: 500; }
+    .action-card .value-mono { color: rgb(228 228 231); font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; }
+    .action-card .value-desc { color: rgb(212 212 216); font-size: 12px; line-height: 1.65; }
+    .action-grid { display: grid; grid-template-columns: 220px 1fr; gap: 14px 18px; align-items: start; }
+    @media (max-width: 768px) { .action-grid { grid-template-columns: 1fr; gap: 4px; } }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-family: 'Geist Mono', ui-monospace, monospace; }
+    .pill-violet { background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); color: rgb(196, 181, 253); }
+    .pill-amber { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: rgb(252, 211, 77); }
+    .pill-cyan { background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); color: rgb(165, 243, 252); }
+    .pill-emerald { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: rgb(167, 243, 208); }
+    .pill-rose { background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); color: rgb(253, 164, 175); }
+    .pill-blue { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: rgb(147, 197, 253); }
+    .pill-zinc { background: rgba(113, 113, 122, 0.15); border: 1px solid rgba(113, 113, 122, 0.3); color: rgb(212, 212, 216); }
+
+    /* Bloques de prompt / código copiables */
+    .prompt-block {
+      background: rgba(15, 12, 28, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.18);
+      border-left: 3px solid rgba(139, 92, 246, 0.5);
+      border-radius: 12px;
+      padding: 18px 20px;
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 12px;
+      line-height: 1.65;
+      color: rgb(212, 212, 216);
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .prompt-block.amber {
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-left: 3px solid rgba(245, 158, 11, 0.5);
+      background: rgba(28, 22, 12, 0.6);
+    }
+
+    /* Detail/Summary expandibles */
+    details.wf-card {
+      background: rgba(9, 9, 11, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    details.wf-card[open] { border-color: rgba(139, 92, 246, 0.25); }
+    details.wf-card > summary {
+      padding: 18px 22px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    details.wf-card > summary::-webkit-details-marker { display: none; }
+    details.wf-card > summary::after {
+      content: '＋';
+      font-family: 'Geist Mono', monospace;
+      color: rgb(139, 92, 246);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    details.wf-card[open] > summary::after { content: '−'; }
+    details.wf-card > .wf-body {
+      padding: 0 22px 22px 22px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 18px;
+    }
+
+    /* Tabla de pasos de workflow */
+    .step-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .step-table th {
+      text-align: left;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgb(113, 113, 122);
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-weight: 500;
+    }
+    .step-table td {
+      padding: 12px 14px;
+      vertical-align: top;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: rgb(212, 212, 216);
+      line-height: 1.6;
+    }
+    .step-table td:first-child {
+      font-weight: 500;
+      color: rgb(228, 228, 231);
+      width: 220px;
+      font-family: 'Geist', sans-serif;
+    }
+    .step-table tr:last-child td { border-bottom: none; }
+    .step-table code {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      background: rgba(139, 92, 246, 0.1);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: rgb(196, 181, 253);
+    }
+
+    /* Kanban card del pipeline */
+    .stage-card {
+      flex-shrink: 0;
+      width: 260px;
+      border-radius: 14px;
+      background: #0f0f0f;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .stage-card .accent { height: 6px; }
+    .stage-card .body { padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .stage-card .desc {
+      font-size: 11px;
+      color: rgb(113, 113, 122);
+      line-height: 1.55;
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    /* Mini handoff cards */
+    .handoff-mini {
+      flex-shrink: 0;
+      width: 220px;
+      border-radius: 12px;
+      background: #0c0c0c;
+      border: 1px solid rgba(59, 130, 246, 0.18);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    @media print {
+      body { background: white; color: black; }
+      .toc-link, aside { display: none; }
+      details.wf-card { break-inside: avoid; border-color: #ccc; }
+      details.wf-card[open] > summary::after, details.wf-card > summary::after { display: none; }
+      .pill { border: 1px solid #888; color: #333; background: #f5f5f5; }
+    }
+  </style>
+</head>
+<body class="bg-[#0a0a0b] text-zinc-100 antialiased grain min-h-screen relative">
+
+<div class="fixed inset-0 pointer-events-none" style="background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139, 92, 246, 0.08), transparent 60%);"></div>
+
+<div class="relative max-w-[1400px] mx-auto flex">
+
+  <!-- TOC sidebar -->
+  <aside class="hidden lg:block w-60 shrink-0 sticky top-0 h-screen pt-20 px-6 overflow-y-auto">
+    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-5">Blueprint · v0</p>
+    <nav class="space-y-0.5">
+      <a href="#pipeline" class="toc-link block py-2 px-3 text-sm text-zinc-400 border-l border-transparent">01 · Pipeline</a>
+      <a href="#campos" class="toc-link block py-2 px-3 text-sm text-zinc-400 border-l border-transparent">02 · Campos personalizados</a>
+      <a href="#automatizaciones" class="toc-link block py-2 px-3 text-sm text-zinc-400 border-l border-transparent">03 · Automatizaciones</a>
+      <a href="#auto-pipeline" class="toc-link sub block py-1 px-3 text-zinc-500 border-l border-transparent">3.1 · Pipeline → WFs</a>
+      <a href="#auto-workflows" class="toc-link sub block py-1 px-3 text-zinc-500 border-l border-transparent">3.2 · Workflows detalle</a>
+      <a href="#bot" class="toc-link block py-2 px-3 text-sm text-zinc-400 border-l border-transparent">04 · Bot de IA</a>
+      <a href="#bot-settings" class="toc-link sub block py-1 px-3 text-zinc-500 border-l border-transparent">4.1 · Settings</a>
+      <a href="#bot-prompt" class="toc-link sub block py-1 px-3 text-zinc-500 border-l border-transparent">4.2 · Prompt</a>
+      <a href="#bot-actions" class="toc-link sub block py-1 px-3 text-zinc-500 border-l border-transparent">4.3 · Bot Actions</a>
+      <a href="#bot-stop" class="toc-link sub block py-1 px-3 text-zinc-500 border-l border-transparent">4.4 · Detener bot</a>
+      <a href="#bot-info" class="toc-link sub block py-1 px-3 text-zinc-500 border-l border-transparent">4.5 · Info contacto</a>
+      <a href="#bot-handoff" class="toc-link sub block py-1 px-3 text-zinc-500 border-l border-transparent">4.6 · Transfer humano</a>
+      <a href="#bot-transfer" class="toc-link sub block py-1 px-3 text-zinc-500 border-l border-transparent">4.7 · Bot Transfer</a>
+      <a href="#bot-reserva" class="toc-link sub block py-1 px-3 text-zinc-500 border-l border-transparent">4.8 · Reserva cita</a>
+      <a href="#bot-followup" class="toc-link sub block py-1 px-3 text-zinc-500 border-l border-transparent">4.9 · Seguimiento</a>
+    </nav>
+
+    <div class="mt-10 pt-6 border-t border-white/[0.06]">
+      <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Cliente</p>
+      <p class="text-sm text-zinc-300">AL Odontología</p>
+      <p class="text-xs text-zinc-500">Atena · Stefi · Diego</p>
+    </div>
+    <div class="mt-4">
+      <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Stack</p>
+      <p class="text-sm text-zinc-300">GHL · App Level</p>
+      <p class="text-xs text-zinc-500">Conversation AI V2 · WhatsApp</p>
+    </div>
+    <div class="mt-4">
+      <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Equipo</p>
+      <p class="text-sm text-zinc-300">Andy · Axel</p>
+      <p class="text-xs text-zinc-500">AL Consulting</p>
+    </div>
+    <div class="mt-4 pt-4 border-t border-white/[0.06]">
+      <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Docs</p>
+      <a href="KICKOFF-VISUAL.html" class="text-xs text-violet-300/80 hover:text-violet-200 underline-offset-4 hover:underline block">↗ Kickoff visual (R1)</a>
+      <a href="../knowledge/bot-atena-v0.md" class="text-xs text-violet-300/80 hover:text-violet-200 underline-offset-4 hover:underline block mt-1">↗ Bot Atena · v0 (KB)</a>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="flex-1 px-6 md:px-10 py-12 md:py-20 max-w-[1100px]">
+
+    <header class="mb-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></div>
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">Blueprint operativo · v0 · 06 may 2026</p>
+      </div>
+      <h1 class="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05]">
+        Blueprint Bot Atena<br>
+        <span class="text-zinc-500">para AL Odontología</span>
+      </h1>
+      <p class="mt-6 text-lg text-zinc-400 max-w-2xl leading-relaxed serif-italic">
+        Lo que se pega en GHL — pipeline, custom fields, workflows, prompt y bot actions. Útil también como template replicable para futuros clientes.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-2">
+        <span class="pill pill-violet">Pipeline · 8 etapas</span>
+        <span class="pill pill-cyan">6 custom fields</span>
+        <span class="pill pill-violet">7 workflows</span>
+        <span class="pill pill-violet">4 handoffs</span>
+        <span class="pill pill-emerald">Doble entrega · UI + AI Builder</span>
+      </div>
+    </header>
+
+    <!-- ============================================================ -->
+    <!-- 01 · PIPELINE                                                 -->
+    <!-- ============================================================ -->
+    <section id="pipeline" class="mb-24 scroll-mt-12">
+      <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-3">01 · Pipeline</p>
+      <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-3">Estructura del pipeline</h2>
+      <p class="serif-italic text-zinc-400 mb-8 max-w-3xl">8 etapas principales con su trigger de entrada, SLA y custom fields que se llenan en cada una. La etapa 04 (Handoff Atena) tiene 4 sub-etapas según el motivo del handoff.</p>
+
+      <!-- KANBAN HORIZONTAL · 8 etapas -->
+      <div class="rounded-3xl border border-white/[0.06] bg-zinc-950/40 p-6 md:p-8 mb-8">
+        <div class="flex items-center justify-between mb-5">
+          <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500">PIPELINE — 8 etapas</p>
+          <p class="font-mono text-[10px] text-zinc-600">scroll →</p>
+        </div>
+        <div class="overflow-x-auto pb-3 -mx-6 px-6 md:-mx-8 md:px-8">
+          <div class="flex gap-3 items-stretch min-w-max">
+
+            <!-- 01 -->
+            <div class="stage-card">
+              <div class="accent bg-violet-400/80"></div>
+              <div class="body">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-zinc-500">01</span>
+                <h3 class="text-base font-semibold text-zinc-100 leading-snug">Lead nuevo</h3>
+                <span class="self-start pill pill-violet">Customer Replied · 1er msg de campaña</span>
+                <span class="self-start pill pill-amber">⏰ Inmediato</span>
+                <div class="flex flex-wrap gap-1">
+                  <span class="pill pill-cyan">campana_origen</span>
+                </div>
+                <p class="desc">Lead recién entrado por campaña Meta. WF1 lo agrega al pipeline.</p>
+              </div>
+            </div>
+            <div class="flex items-center text-zinc-600 px-1">▸</div>
+
+            <!-- 02 -->
+            <div class="stage-card">
+              <div class="accent bg-violet-400/80"></div>
+              <div class="body">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-zinc-500">02</span>
+                <h3 class="text-base font-semibold text-zinc-100 leading-snug">En conversación con bot</h3>
+                <span class="self-start pill pill-violet">WF1 · activa Bot Atena</span>
+                <span class="self-start pill pill-amber">⏰ 1-3 min</span>
+                <div class="flex flex-wrap gap-1">
+                  <span class="pill pill-cyan">tipo_tratamiento</span>
+                </div>
+                <p class="desc">Bot conversa, identifica vertical (general / armonización / implantología).</p>
+              </div>
+            </div>
+            <div class="flex items-center text-zinc-600 px-1">▸</div>
+
+            <!-- 03 -->
+            <div class="stage-card">
+              <div class="accent bg-violet-400/80"></div>
+              <div class="body">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-zinc-500">03</span>
+                <h3 class="text-base font-semibold text-zinc-100 leading-snug">FAQs respondidas</h3>
+                <span class="self-start pill pill-violet">Bot resuelve con KB</span>
+                <span class="self-start pill pill-amber">⏰ 5-15 min</span>
+                <div class="flex flex-wrap gap-1">
+                  <span class="pill pill-cyan">motivo_consulta</span>
+                </div>
+                <p class="desc">Bot responde obras sociales, precio consulta, ubicación parcial. Esquiva precios de tratamientos.</p>
+              </div>
+            </div>
+            <div class="flex items-center text-zinc-600 px-1">▸</div>
+
+            <!-- 04 (madre del handoff) -->
+            <div class="stage-card">
+              <div class="accent bg-violet-400/80"></div>
+              <div class="body">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-zinc-500">04</span>
+                <h3 class="text-base font-semibold text-zinc-100 leading-snug">Handoff Atena</h3>
+                <span class="self-start pill pill-violet">Bot dispara Trigger Workflow</span>
+                <span class="self-start pill pill-amber">⏰ Inmediato · alerta</span>
+                <div class="flex flex-wrap gap-1">
+                  <span class="pill pill-cyan">handoff_motivo</span>
+                </div>
+                <p class="desc">4 sub-etapas según motivo. Ver tarjetas debajo · WF2-5 mueven y desactivan bot.</p>
+              </div>
+            </div>
+            <div class="flex items-center text-zinc-600 px-1">▸</div>
+
+            <!-- 05 -->
+            <div class="stage-card">
+              <div class="accent bg-blue-400/80"></div>
+              <div class="body">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-zinc-500">05</span>
+                <h3 class="text-base font-semibold text-zinc-100 leading-snug">Fecha ofrecida</h3>
+                <span class="self-start pill pill-blue">Atena humana propone</span>
+                <span class="self-start pill pill-amber">⏰ 24 h</span>
+                <p class="desc">Atena ofrece dos opciones de horario. Lead elige cuál le queda mejor.</p>
+              </div>
+            </div>
+            <div class="flex items-center text-zinc-600 px-1">▸</div>
+
+            <!-- 06 -->
+            <div class="stage-card">
+              <div class="accent bg-blue-400/80"></div>
+              <div class="body">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-zinc-500">06</span>
+                <h3 class="text-base font-semibold text-zinc-100 leading-snug">Seña enviada</h3>
+                <span class="self-start pill pill-blue">WF7 · tag sena_enviada</span>
+                <span class="self-start pill pill-rose">🎯 Filtro calificación</span>
+                <span class="self-start pill pill-amber">⏰ 24 h</span>
+                <div class="flex flex-wrap gap-1">
+                  <span class="pill pill-cyan">alias_enviado_at</span>
+                </div>
+                <p class="desc">Lead califica si paga seña $20.000 (50% de $40k). Vía alias o presencial.</p>
+              </div>
+            </div>
+            <div class="flex items-center text-zinc-600 px-1">▸</div>
+
+            <!-- 07 -->
+            <div class="stage-card">
+              <div class="accent bg-blue-400/80"></div>
+              <div class="body">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-zinc-500">07</span>
+                <h3 class="text-base font-semibold text-zinc-100 leading-snug">Turno confirmado</h3>
+                <span class="self-start pill pill-blue">Tag sena_pagada</span>
+                <span class="self-start pill pill-amber">⏰ Hasta el turno</span>
+                <p class="desc">Confirmación + recordatorios. Atena pasa dirección exacta acá, no antes.</p>
+              </div>
+            </div>
+            <div class="flex items-center text-zinc-600 px-1">▸</div>
+
+            <!-- 08 -->
+            <div class="stage-card">
+              <div class="accent bg-emerald-400/80"></div>
+              <div class="body">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-zinc-500">08</span>
+                <h3 class="text-base font-semibold text-zinc-100 leading-snug">Consulta + diagnóstico</h3>
+                <span class="self-start pill pill-emerald">Visita presencial</span>
+                <span class="self-start pill pill-amber">⏰ —</span>
+                <p class="desc">Primera consulta presencial: evaluación + tomografía → recién acá hay presupuesto real.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Leyenda zonas -->
+        <div class="flex flex-wrap items-center gap-6 mt-6 pt-4 border-t border-white/[0.04]">
+          <div class="flex items-center gap-2 text-xs">
+            <span class="w-3 h-1.5 rounded-sm bg-violet-400/80"></span>
+            <span class="text-zinc-400">Zona Bot · automática</span>
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="w-3 h-1.5 rounded-sm bg-blue-400/80"></span>
+            <span class="text-zinc-400">Zona humana · Atena</span>
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="w-3 h-1.5 rounded-sm bg-emerald-400/80"></span>
+            <span class="text-zinc-400">Cierre · ganado</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 04 sub-etapas -->
+      <div class="rounded-2xl border border-white/[0.06] bg-zinc-950/40 p-6 md:p-7">
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-1">04 · Handoff Atena · sub-etapas</p>
+        <p class="text-zinc-400 text-sm mb-5 max-w-2xl">El bot dispara una de 4 sub-etapas según motivo. Cada una mueve el contacto, asigna a Atena humana, agrega tag y desactiva el bot.</p>
+        <div class="flex flex-wrap gap-3">
+          <div class="handoff-mini">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-blue-300/80">04 · A</span>
+            <h4 class="text-sm font-semibold text-zinc-100">Agendar</h4>
+            <span class="self-start pill pill-blue">handoff_agendar</span>
+            <p class="text-[11px] text-zinc-500 leading-relaxed">Paciente quiere coordinar turno. → <a href="#wf2" class="text-violet-300 hover:underline">WF2</a></p>
+          </div>
+          <div class="handoff-mini">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-blue-300/80">04 · B</span>
+            <h4 class="text-sm font-semibold text-zinc-100">Imagen</h4>
+            <span class="self-start pill pill-blue">handoff_imagen</span>
+            <p class="text-[11px] text-zinc-500 leading-relaxed">Mandó foto / video clínico. → <a href="#wf3" class="text-violet-300 hover:underline">WF3</a></p>
+          </div>
+          <div class="handoff-mini">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-blue-300/80">04 · C</span>
+            <h4 class="text-sm font-semibold text-zinc-100">No Sé</h4>
+            <span class="self-start pill pill-blue">handoff_no_se · kb_gap</span>
+            <p class="text-[11px] text-zinc-500 leading-relaxed">Bot no encontró respuesta en KB. → <a href="#wf4" class="text-violet-300 hover:underline">WF4</a></p>
+          </div>
+          <div class="handoff-mini">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-blue-300/80">04 · D</span>
+            <h4 class="text-sm font-semibold text-zinc-100">Pedido humano</h4>
+            <span class="self-start pill pill-blue">handoff_pedido_humano</span>
+            <p class="text-[11px] text-zinc-500 leading-relaxed">Pidió hablar con persona / dolor agudo. → <a href="#wf5" class="text-violet-300 hover:underline">WF5</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 02 · CAMPOS / VALORES PERSONALIZADOS                          -->
+    <!-- ============================================================ -->
+    <section id="campos" class="mb-24 scroll-mt-12">
+      <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-3">02 · Campos personalizados</p>
+      <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-3">Custom Fields y Tags</h2>
+      <p class="serif-italic text-zinc-400 mb-8 max-w-3xl">Carpeta dedicada <span class="font-mono not-italic text-zinc-300">Bot Atena</span> · todos los CFs en TEXT (single line) sin dropdowns. Filtros de reporte se hacen con tags, no con CFs.</p>
+
+      <!-- Tabla de custom fields -->
+      <div class="diagram-card mb-8">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-4">6 custom fields · carpeta "Bot Atena"</p>
+        <div class="overflow-x-auto">
+          <table class="step-table" style="min-width: 720px;">
+            <thead>
+              <tr>
+                <th>Field Name (UI)</th>
+                <th>Field Key</th>
+                <th>Tipo</th>
+                <th>Uso</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Tipo Tratamiento</td>
+                <td><code>contact.tipo_tratamiento</code></td>
+                <td><span class="pill pill-cyan">TEXT</span></td>
+                <td>Captura del bot · usado por WF de routing</td>
+              </tr>
+              <tr>
+                <td>Motivo Consulta</td>
+                <td><code>contact.motivo_consulta</code></td>
+                <td><span class="pill pill-cyan">TEXT</span></td>
+                <td>Captura del bot · contexto para Atena humana</td>
+              </tr>
+              <tr>
+                <td>Urgencia</td>
+                <td><code>contact.urgencia</code></td>
+                <td><span class="pill pill-cyan">TEXT</span></td>
+                <td>Captura del bot · prioriza handoff</td>
+              </tr>
+              <tr>
+                <td>Handoff Motivo</td>
+                <td><code>contact.handoff_motivo</code></td>
+                <td><span class="pill pill-cyan">TEXT</span></td>
+                <td>Por qué se hizo handoff (4 valores)</td>
+              </tr>
+              <tr>
+                <td>Campaña Origen</td>
+                <td><code>contact.campana_origen</code></td>
+                <td><span class="pill pill-cyan">TEXT</span></td>
+                <td>Lo llena WF1 · valor del source de Meta Ads</td>
+              </tr>
+              <tr>
+                <td>Alias Enviado At</td>
+                <td><code>contact.alias_enviado_at</code></td>
+                <td><span class="pill pill-cyan">TEXT</span></td>
+                <td>Timestamp de cuándo Atena humana mandó el alias</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[12px] text-zinc-500 mt-4 leading-relaxed">
+          <strong class="text-zinc-300">Captura automática:</strong> GHL llena <code class="font-mono text-violet-300">contact.first_name</code>, <code class="font-mono text-violet-300">email</code> y <code class="font-mono text-violet-300">phone</code> sin necesidad de Add Contact Info. Por eso solo configuramos los 6 fields de arriba.
+        </p>
+      </div>
+
+      <!-- Tags -->
+      <div class="diagram-card">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-3">12 tags · creados antes de los workflows</p>
+        <div class="space-y-3">
+          <div>
+            <p class="text-xs text-zinc-500 mb-2 font-mono">Handoff (motivo)</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="pill pill-blue">handoff_agendar</span>
+              <span class="pill pill-blue">handoff_imagen</span>
+              <span class="pill pill-blue">handoff_no_se</span>
+              <span class="pill pill-blue">handoff_pedido_humano</span>
+              <span class="pill pill-rose">urgente</span>
+              <span class="pill pill-amber">kb_gap</span>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs text-zinc-500 mb-2 font-mono">Stop bot</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="pill pill-zinc">despedida_amigable</span>
+              <span class="pill pill-zinc">no_interesado</span>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs text-zinc-500 mb-2 font-mono">Follow-up + seña</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="pill pill-violet">follow_up_completado</span>
+              <span class="pill pill-emerald">sena_enviada</span>
+              <span class="pill pill-emerald">sena_pagada</span>
+              <span class="pill pill-amber">sena_sin_pagar_24h</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 03 · AUTOMATIZACIONES (7 workflows)                           -->
+    <!-- ============================================================ -->
+    <section id="automatizaciones" class="mb-24 scroll-mt-12">
+      <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-3">03 · Automatizaciones</p>
+      <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-3">Automatizaciones · pipeline y bot</h2>
+      <p class="serif-italic text-zinc-400 mb-12 max-w-3xl">Primero el mapeo de qué sucede en cada etapa del pipeline y qué workflow se activa. Después los 7 workflows en detalle, con configuración manual paso a paso (UI) y prompt para el Workflow AI Builder.</p>
+
+      <!-- ============================================================ -->
+      <!-- 3.1 · MAPEO PIPELINE → WORKFLOWS                              -->
+      <!-- ============================================================ -->
+      <div id="auto-pipeline" class="mb-20 scroll-mt-12">
+        <h3 class="text-xl md:text-2xl font-semibold tracking-tight mb-3 text-zinc-100">3.1 · Pipeline → Workflows · qué se activa en cada etapa</h3>
+        <p class="text-zinc-400 mb-6 text-sm max-w-2xl">Las 8 etapas del pipeline con la descripción de qué sucede dentro y qué workflow se dispara para entrar o salir de ella. Click en el WF para saltar al detalle.</p>
+
+        <div class="space-y-3">
+
+          <!-- 01 -->
+          <div class="rounded-2xl bg-zinc-950/50 border border-white/[0.08] border-l-[3px] border-l-violet-400/70 p-5 md:p-6">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="font-mono text-xs text-zinc-500">01</span>
+              <h4 class="text-lg font-semibold text-zinc-100">Lead nuevo</h4>
+              <span class="pill pill-violet">Zona bot</span>
+            </div>
+            <p class="text-[13px] text-zinc-400 leading-relaxed mb-4">El paciente respondió al ad de Meta. WF1 lo detecta como contacto nuevo (con <code class="font-mono text-violet-300 text-xs bg-violet-500/10 px-1 rounded">first_name</code> vacío), guarda el origen de campaña, lo agrega al pipeline en esta etapa y dispara el saludo de bienvenida antes de activar el bot.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo entra</p>
+                <p class="text-zinc-300">Trigger <code class="font-mono text-cyan-300 bg-cyan-500/10 px-1 rounded text-[11px]">Customer Replied</code> de <a href="#wf1" class="text-violet-300 hover:underline">WF1</a></p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Workflow activo</p>
+                <p class="text-zinc-300"><a href="#wf1" class="text-violet-300 hover:underline font-medium">WF1 · Lead nuevo entrante</a></p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo sale</p>
+                <p class="text-zinc-300">WF1 step 7 → <strong class="text-zinc-200">02</strong></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 02 -->
+          <div class="rounded-2xl bg-zinc-950/50 border border-white/[0.08] border-l-[3px] border-l-violet-400/70 p-5 md:p-6">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="font-mono text-xs text-zinc-500">02</span>
+              <h4 class="text-lg font-semibold text-zinc-100">En conversación con bot</h4>
+              <span class="pill pill-violet">Zona bot</span>
+            </div>
+            <p class="text-[13px] text-zinc-400 leading-relaxed mb-4">El bot Atena saludó al paciente, le pidió el motivo y empieza a identificar la vertical (general / armonización / implantología). Captura <code class="font-mono text-violet-300 text-xs bg-violet-500/10 px-1 rounded">tipo_tratamiento</code> y <code class="font-mono text-violet-300 text-xs bg-violet-500/10 px-1 rounded">motivo_consulta</code> en el camino. WF6 corre en background midiendo silencios.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo entra</p>
+                <p class="text-zinc-300">WF1 step 7 desde <strong class="text-zinc-200">01</strong></p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Workflow activo</p>
+                <p class="text-zinc-300"><a href="#wf6" class="text-violet-300 hover:underline font-medium">WF6 · Auto follow-up</a> <span class="text-zinc-500">(background)</span></p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo sale</p>
+                <p class="text-zinc-300">→ <strong class="text-zinc-200">03</strong> (FAQs) · o <strong class="text-zinc-200">04</strong> si dispara handoff</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 03 -->
+          <div class="rounded-2xl bg-zinc-950/50 border border-white/[0.08] border-l-[3px] border-l-violet-400/70 p-5 md:p-6">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="font-mono text-xs text-zinc-500">03</span>
+              <h4 class="text-lg font-semibold text-zinc-100">FAQs respondidas</h4>
+              <span class="pill pill-violet">Zona bot</span>
+              <span class="pill pill-amber">Etapa transicional</span>
+            </div>
+            <p class="text-[13px] text-zinc-400 leading-relaxed mb-4">El bot ya respondió las preguntas básicas con la Knowledge Base (obras sociales, precio consulta inicial, ubicación parcial, info de tratamientos). El paciente está informado — falta saber si quiere agendar o no. Es una etapa de evaluación pasiva del bot.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo entra</p>
+                <p class="text-zinc-300">Sin WF explícito en v0 · etapa intermedia</p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Workflow activo</p>
+                <p class="text-zinc-300"><a href="#wf6" class="text-violet-300 hover:underline font-medium">WF6</a> sigue corriendo</p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo sale</p>
+                <p class="text-zinc-300">→ <strong class="text-zinc-200">04</strong> via <a href="#wf2" class="text-violet-300 hover:underline">WF2</a>/<a href="#wf3" class="text-violet-300 hover:underline">3</a>/<a href="#wf4" class="text-violet-300 hover:underline">4</a>/<a href="#wf5" class="text-violet-300 hover:underline">5</a> según handoff</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 04 -->
+          <div class="rounded-2xl bg-zinc-950/50 border border-white/[0.08] border-l-[3px] border-l-violet-400/70 p-5 md:p-6">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="font-mono text-xs text-zinc-500">04</span>
+              <h4 class="text-lg font-semibold text-zinc-100">Handoff Atena</h4>
+              <span class="pill pill-blue">Bisagra · bot → humano</span>
+              <span class="pill pill-amber">4 sub-etapas</span>
+            </div>
+            <p class="text-[13px] text-zinc-400 leading-relaxed mb-4">El bot detecta una de las 4 condiciones de handoff (agendar / imagen / no sé / pedido humano) y dispara el Trigger Workflow correspondiente. El WF mueve la etapa a la sub-etapa específica, asigna a Atena humana, agrega tag, desactiva el bot y le manda notificación interna a Atena.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo entra</p>
+                <p class="text-zinc-300">Bot Action <code class="font-mono text-cyan-300 bg-cyan-500/10 px-1 rounded text-[11px]">Trigger Workflow</code> · 4 condiciones</p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Workflows activos</p>
+                <p class="text-zinc-300"><a href="#wf2" class="text-violet-300 hover:underline">WF2</a> · <a href="#wf3" class="text-violet-300 hover:underline">WF3</a> · <a href="#wf4" class="text-violet-300 hover:underline">WF4</a> · <a href="#wf5" class="text-violet-300 hover:underline">WF5</a></p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo sale</p>
+                <p class="text-zinc-300">→ <strong class="text-zinc-200">05</strong> manual (Atena humana ofrece fecha)</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 05 -->
+          <div class="rounded-2xl bg-zinc-950/50 border border-white/[0.08] border-l-[3px] border-l-blue-400/70 p-5 md:p-6">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="font-mono text-xs text-zinc-500">05</span>
+              <h4 class="text-lg font-semibold text-zinc-100">Fecha ofrecida</h4>
+              <span class="pill pill-blue">Zona humana</span>
+            </div>
+            <p class="text-[13px] text-zinc-400 leading-relaxed mb-4">Atena humana le propuso al paciente 2 horarios concretos (mañana / tarde, o dos días distintos) y espera confirmación. El paciente puede tardar minutos o días en decidir. Movimiento manual — no hay WF acá, el bot está inactive.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo entra</p>
+                <p class="text-zinc-300">Manual · Atena mueve la etapa al ofrecer horarios</p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Workflow activo</p>
+                <p class="text-zinc-500">Ninguno · bot inactive · espera respuesta</p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo sale</p>
+                <p class="text-zinc-300">→ <strong class="text-zinc-200">06</strong> al agregar tag <code class="font-mono text-emerald-300 bg-emerald-500/10 px-1 rounded text-[11px]">sena_enviada</code></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 06 -->
+          <div class="rounded-2xl bg-zinc-950/50 border border-white/[0.08] border-l-[3px] border-l-blue-400/70 p-5 md:p-6">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="font-mono text-xs text-zinc-500">06</span>
+              <h4 class="text-lg font-semibold text-zinc-100">Seña enviada</h4>
+              <span class="pill pill-blue">Zona humana</span>
+              <span class="pill pill-rose">🎯 Filtro calificación</span>
+            </div>
+            <p class="text-[13px] text-zinc-400 leading-relaxed mb-4">Atena humana le mandó al paciente el alias bancario para pagar la seña ($20.000 · 50% de la consulta). WF7 dispara: marca el timestamp en <code class="font-mono text-violet-300 text-xs bg-violet-500/10 px-1 rounded">alias_enviado_at</code> y arranca un Wait Step de 24h. Si paga → 07. Si no paga en 24h → notificación a Atena + tag <code class="font-mono text-amber-300 text-xs bg-amber-500/10 px-1 rounded">sena_sin_pagar_24h</code>.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo entra</p>
+                <p class="text-zinc-300">Trigger <code class="font-mono text-cyan-300 bg-cyan-500/10 px-1 rounded text-[11px]">Tag Added</code> · <code class="font-mono text-emerald-300 bg-emerald-500/10 px-1 rounded text-[11px]">sena_enviada</code></p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Workflow activo</p>
+                <p class="text-zinc-300"><a href="#wf7" class="text-violet-300 hover:underline font-medium">WF7 · Seña enviada</a></p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo sale</p>
+                <p class="text-zinc-300">→ <strong class="text-zinc-200">07</strong> si tag <code class="font-mono text-emerald-300 bg-emerald-500/10 px-1 rounded text-[11px]">sena_pagada</code> aparece en 24h</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 07 -->
+          <div class="rounded-2xl bg-zinc-950/50 border border-white/[0.08] border-l-[3px] border-l-blue-400/70 p-5 md:p-6">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="font-mono text-xs text-zinc-500">07</span>
+              <h4 class="text-lg font-semibold text-zinc-100">Turno confirmado</h4>
+              <span class="pill pill-blue">Zona humana</span>
+            </div>
+            <p class="text-[13px] text-zinc-400 leading-relaxed mb-4">El paciente pagó la seña. Atena humana le confirma el turno y le manda la dirección exacta de la clínica (recién acá, no antes). Esta etapa dura hasta el día del turno presencial. Recordatorios automáticos pre-turno son upgrade post-v0.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo entra</p>
+                <p class="text-zinc-300">WF7 step 4 (rama "pagó") · tag <code class="font-mono text-emerald-300 bg-emerald-500/10 px-1 rounded text-[11px]">sena_pagada</code></p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Workflow activo</p>
+                <p class="text-zinc-500">Ninguno en v0 · futuro: WF de recordatorios</p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo sale</p>
+                <p class="text-zinc-300">→ <strong class="text-zinc-200">08</strong> manual al concretar la consulta</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 08 -->
+          <div class="rounded-2xl bg-zinc-950/50 border border-white/[0.08] border-l-[3px] border-l-emerald-400/70 p-5 md:p-6">
+            <div class="flex items-baseline gap-3 mb-2 flex-wrap">
+              <span class="font-mono text-xs text-zinc-500">08</span>
+              <h4 class="text-lg font-semibold text-zinc-100">Consulta + diagnóstico</h4>
+              <span class="pill pill-emerald">Cierre · ganado</span>
+            </div>
+            <p class="text-[13px] text-zinc-400 leading-relaxed mb-4">El paciente vino a la clínica, se hizo evaluación y tomografía. Recién acá hay presupuesto real del tratamiento. Cierre del pipeline de captación; lo que sigue (decisión de tratamiento, plan de pago, ejecución) está fuera del scope v0.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo entra</p>
+                <p class="text-zinc-300">Manual · al concretar la visita presencial</p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Workflow activo</p>
+                <p class="text-zinc-500">Ninguno · cierre del flujo de captación</p>
+              </div>
+              <div>
+                <p class="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cómo sale</p>
+                <p class="text-zinc-300">End · pipeline de tratamiento (futuro)</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Resumen tabla -->
+        <div class="mt-6 p-5 rounded-2xl bg-zinc-950/40 border border-white/[0.06]">
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-3">Resumen · qué WF mueve qué etapa</p>
+          <div class="overflow-x-auto">
+            <table class="step-table" style="min-width: 720px;">
+              <thead>
+                <tr>
+                  <th>Workflow</th>
+                  <th>Mueve de</th>
+                  <th>A</th>
+                  <th>Disparador</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><a href="#wf1" class="text-violet-300 hover:underline">WF1</a></td><td>—</td><td><code>01 → 02</code></td><td><code>Customer Replied</code> (1er msg de campaña)</td></tr>
+                <tr><td><a href="#wf2" class="text-violet-300 hover:underline">WF2</a></td><td><code>02-03</code></td><td><code>04 · Agendar</code></td><td>Bot Action handoff Agendar</td></tr>
+                <tr><td><a href="#wf3" class="text-violet-300 hover:underline">WF3</a></td><td><code>02-03</code></td><td><code>04 · Imagen</code></td><td>Bot Action handoff Imagen</td></tr>
+                <tr><td><a href="#wf4" class="text-violet-300 hover:underline">WF4</a></td><td><code>02-03</code></td><td><code>04 · No Sé</code></td><td>Bot Action handoff No Sé</td></tr>
+                <tr><td><a href="#wf5" class="text-violet-300 hover:underline">WF5</a></td><td><code>02-03</code></td><td><code>04 · Pedido Humano</code></td><td>Bot Action handoff Pedido Humano</td></tr>
+                <tr><td><a href="#wf6" class="text-violet-300 hover:underline">WF6</a></td><td>—</td><td>No mueve etapa</td><td><code>Customer Replied</code> · 2h y 24h</td></tr>
+                <tr><td><a href="#wf7" class="text-violet-300 hover:underline">WF7</a></td><td><code>05</code></td><td><code>06</code> y luego <code>07</code></td><td>Tag <code>sena_enviada</code> agregado</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- 3.2 · WORKFLOWS · DETALLE DOBLE ENTREGA                       -->
+      <!-- ============================================================ -->
+      <div id="auto-workflows" class="scroll-mt-12">
+        <h3 class="text-xl md:text-2xl font-semibold tracking-tight mb-3 text-zinc-100">3.2 · Workflows del bot · doble entrega</h3>
+        <p class="text-zinc-400 mb-6 text-sm max-w-3xl">Los 7 workflows en detalle. Cada card tiene configuración manual paso a paso (UI) + prompt para el Workflow AI Builder. Click para expandir.</p>
+
+        <div class="mb-3 flex flex-wrap items-center gap-3 text-xs text-zinc-500">
+          <span class="font-mono">7 workflows</span>
+          <span>·</span>
+          <span class="pill pill-violet">Customer Replied · 2</span>
+          <span class="pill pill-violet">Bot Action · 4</span>
+          <span class="pill pill-violet">Tag Added · 1</span>
+        </div>
+
+      <!-- WF1 -->
+      <details class="wf-card" id="wf1" open>
+        <summary>
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="font-mono text-[11px] text-violet-300/80">WF1</span>
+            <h3 class="text-lg font-semibold text-zinc-100">Lead nuevo entrante</h3>
+            <span class="pill pill-violet">Customer Replied</span>
+            <span class="pill pill-amber">Filtro: Source = Meta Ads</span>
+          </div>
+        </summary>
+        <div class="wf-body">
+          <p class="serif-italic text-zinc-400 mb-5">Detecta mensaje entrante de paciente proveniente de campaña → manda saludo de bienvenida → activa bot Atena. El bot tiene Initial Message vacío justamente porque acá se manda el saludo.</p>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">A · Configuración manual UI</p>
+          <div class="overflow-x-auto mb-6">
+            <table class="step-table">
+              <tbody>
+                <tr><td>Workflow Name</td><td><code>WF1 · Lead nuevo entrante</code></td></tr>
+                <tr><td>Trigger</td><td><code>Customer Replied</code></td></tr>
+                <tr><td>Trigger Filters</td><td><code>Source = Facebook Ads</code> OR <code>Source = Instagram Ads</code> · alternativa: filtro por palabra clave de campaña en 1er msg</td></tr>
+                <tr><td>Step 1 — If/Else</td><td>Condición: <code>contact.first_name</code> está vacío. Si vacío → lead nuevo · si tiene nombre → paciente existente, salir del WF (no activar bot)</td></tr>
+                <tr><td>Step 2 — Update Custom Field</td><td>Field: <code>Campaña Origen</code> · Value: <code>{{trigger.source}}</code></td></tr>
+                <tr><td>Step 3 — Add to Pipeline</td><td>Pipeline: <code>Pipeline AL</code> · Stage: <code>01 · Lead nuevo</code></td></tr>
+                <tr><td>Step 4 — Send Message</td><td>Channel: WhatsApp · Body: <code>Hola {{contact.first_name}} 👋 Gracias por contactarte con clínica AL. ¿Con quién tengo el gusto de hablar? Y contame, ¿en qué te puedo ayudar? 🌷 Atena</code></td></tr>
+                <tr><td>Step 5 — Wait</td><td>30 segundos (le da tiempo al paciente para leer y empezar a responder)</td></tr>
+                <tr><td>Step 6 — Update Conversation AI Bot and Status</td><td>Bot: <code>Atena · AL</code> · Status: <code>Active</code></td></tr>
+                <tr><td>Step 7 — Move Pipeline Stage</td><td>Stage: <code>02 · En conversación con bot</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">B · Prompt para Workflow AI Builder</p>
+          <pre class="prompt-block">Crea un workflow llamado WF1 · Lead nuevo entrante. El trigger es Customer Replied con filtro de source = Facebook Ads o Instagram Ads, para detectar leads nuevos que vienen de campañas pagas. El primer paso es un If/Else que evalúa si el contacto tiene first_name vacío: si está vacío continúa el flujo (es lead nuevo), si tiene nombre termina el workflow (es paciente existente, no debe activarse el bot). Después actualiza el custom field Campaña Origen con el valor del source del trigger. Agrega el contacto al pipeline llamado Pipeline AL en la etapa 01 · Lead nuevo. Envía un mensaje por WhatsApp con el texto: Hola {{contact.first_name}} gracias por contactarte con clínica AL, ¿con quién tengo el gusto de hablar?, y contame en qué te puedo ayudar, firmado por Atena. Espera 30 segundos. Después ejecuta la acción Update Conversation AI Bot and Status seleccionando el bot Atena · AL y status Active. Por último mueve la etapa del pipeline a 02 · En conversación con bot. El propósito es activar al bot Atena solo para leads nuevos que vienen de campañas, evitando que se active para pacientes regulares que ya están en el CRM.</pre>
+        </div>
+      </details>
+
+      <!-- WF2 -->
+      <details class="wf-card" id="wf2">
+        <summary>
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="font-mono text-[11px] text-violet-300/80">WF2</span>
+            <h3 class="text-lg font-semibold text-zinc-100">Handoff Agendar</h3>
+            <span class="pill pill-violet">Bot Action</span>
+            <span class="pill pill-blue">→ Atena humana</span>
+          </div>
+        </summary>
+        <div class="wf-body">
+          <p class="serif-italic text-zinc-400 mb-5">Cuando bot detecta intención de agendar → mover etapa pipeline → asignar a Atena humana → notificarle por interno → desactivar bot.</p>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">A · Configuración manual UI</p>
+          <div class="overflow-x-auto mb-6">
+            <table class="step-table">
+              <tbody>
+                <tr><td>Workflow Name</td><td><code>WF2 · Handoff Agendar</code></td></tr>
+                <tr><td>Trigger</td><td><code>Workflow Triggered from Bot Action</code> (lo dispara Trigger Workflow #1 del bot)</td></tr>
+                <tr><td>Step 1 — Move Pipeline Stage</td><td>Stage: <code>04 · Handoff Atena · Agendar</code></td></tr>
+                <tr><td>Step 2 — Update Custom Field</td><td>Field: <code>Handoff Motivo</code> · Value: <code>agendar</code></td></tr>
+                <tr><td>Step 3 — Assign User</td><td>User: <code>Atena (humana)</code> · todos los mensajes futuros le notifican a ella</td></tr>
+                <tr><td>Step 4 — Add Contact Tag</td><td>Tag: <code>handoff_agendar</code></td></tr>
+                <tr><td>Step 5 — Update Conversation AI Bot and Status</td><td>Bot: <code>Atena · AL</code> · Status: <code>Inactive</code></td></tr>
+                <tr><td>Step 6 — Internal Notification</td><td>Title: <code>🎯 Lead quiere agendar</code> · Body: <code>{{contact.first_name}} ({{contact.phone}}) quiere sacar turno. Tipo: {{contact.tipo_tratamiento}}. Motivo: {{contact.motivo_consulta}}. Urgencia: {{contact.urgencia}}.</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">B · Prompt para Workflow AI Builder</p>
+          <pre class="prompt-block">Crea un workflow llamado WF2 · Handoff Agendar. El trigger es Workflow Triggered from Bot Action, ya que se dispara desde un Bot Action del bot Atena · AL cuando detecta intención de agendar. El primer paso es mover la etapa del pipeline a 04 · Handoff Atena · Agendar. Después actualiza el custom field Handoff Motivo con el valor agendar. El paso siguiente es Assign User asignando el contacto al usuario Atena humana, para que todos los mensajes futuros le lleguen como notificación a ella. Agrega el tag handoff_agendar al contacto. Después ejecuta Update Conversation AI Bot and Status para desactivar el bot Atena · AL seleccionando status Inactive, así el bot deja de responder y la conversación queda libre para que Atena humana tome el control. Por último envía una notificación interna a Atena humana con el título Lead quiere agendar y el body con el nombre, teléfono, tipo de tratamiento, motivo de consulta y urgencia del contacto, usando los custom fields. El propósito es ejecutar el handoff completo del bot a la humana cuando un paciente quiere coordinar turno.</pre>
+        </div>
+      </details>
+
+      <!-- WF3 -->
+      <details class="wf-card" id="wf3">
+        <summary>
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="font-mono text-[11px] text-violet-300/80">WF3</span>
+            <h3 class="text-lg font-semibold text-zinc-100">Handoff Imagen</h3>
+            <span class="pill pill-violet">Bot Action</span>
+            <span class="pill pill-rose">Riesgo médico-legal</span>
+          </div>
+        </summary>
+        <div class="wf-body">
+          <p class="serif-italic text-zinc-400 mb-5">Cuando bot recibe imagen → handoff inmediato a humana porque imágenes clínicas requieren ojo profesional. El bot no las interpreta nunca.</p>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">A · Configuración manual UI</p>
+          <div class="overflow-x-auto mb-6">
+            <table class="step-table">
+              <tbody>
+                <tr><td>Workflow Name</td><td><code>WF3 · Handoff Imagen</code></td></tr>
+                <tr><td>Trigger</td><td><code>Workflow Triggered from Bot Action</code></td></tr>
+                <tr><td>Step 1 — Move Pipeline Stage</td><td>Stage: <code>04 · Handoff Atena · Imagen</code></td></tr>
+                <tr><td>Step 2 — Update Custom Field</td><td>Field: <code>Handoff Motivo</code> · Value: <code>imagen</code></td></tr>
+                <tr><td>Step 3 — Assign User</td><td>User: <code>Atena (humana)</code></td></tr>
+                <tr><td>Step 4 — Add Contact Tag</td><td>Tag: <code>handoff_imagen</code></td></tr>
+                <tr><td>Step 5 — Update Conversation AI Bot and Status</td><td>Bot: <code>Atena · AL</code> · Status: <code>Inactive</code></td></tr>
+                <tr><td>Step 6 — Internal Notification</td><td>Title: <code>📷 Paciente envió foto</code> · Body: <code>{{contact.first_name}} ({{contact.phone}}) envió una imagen. Revisar y responder. Tipo: {{contact.tipo_tratamiento}}.</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">B · Prompt para Workflow AI Builder</p>
+          <pre class="prompt-block">Crea un workflow llamado WF3 · Handoff Imagen. El trigger es Workflow Triggered from Bot Action, se dispara desde el bot Atena · AL cuando un paciente envía una foto, imagen o video clínico. El primer paso mueve la etapa del pipeline a 04 · Handoff Atena · Imagen. Después actualiza el custom field Handoff Motivo con el valor imagen. El paso siguiente asigna el contacto al usuario Atena humana mediante Assign User para que pueda revisar la imagen. Agrega el tag handoff_imagen al contacto. Después ejecuta Update Conversation AI Bot and Status desactivando el bot Atena · AL con status Inactive porque las imágenes clínicas requieren evaluación profesional y el bot no debe interpretarlas. Finalmente envía una notificación interna a Atena humana con título Paciente envió foto y body que incluye el nombre del contacto, teléfono y tipo de tratamiento, indicándole que debe revisar la imagen y responder. El propósito es derivar inmediatamente cualquier imagen entrante a la humana porque hay riesgo médico-legal de que el bot interprete fotos clínicas.</pre>
+        </div>
+      </details>
+
+      <!-- WF4 -->
+      <details class="wf-card" id="wf4">
+        <summary>
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="font-mono text-[11px] text-violet-300/80">WF4</span>
+            <h3 class="text-lg font-semibold text-zinc-100">Handoff No Sé</h3>
+            <span class="pill pill-violet">Bot Action</span>
+            <span class="pill pill-amber">Tag kb_gap (mejora KB)</span>
+          </div>
+        </summary>
+        <div class="wf-body">
+          <p class="serif-italic text-zinc-400 mb-5">Cuando bot no encuentra respuesta en KB → handoff a humana para que responda y de paso para que el equipo identifique gap de KB. Doble propósito: no perder el lead + iterar la KB.</p>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">A · Configuración manual UI</p>
+          <div class="overflow-x-auto mb-6">
+            <table class="step-table">
+              <tbody>
+                <tr><td>Workflow Name</td><td><code>WF4 · Handoff No Sé</code></td></tr>
+                <tr><td>Trigger</td><td><code>Workflow Triggered from Bot Action</code></td></tr>
+                <tr><td>Step 1 — Move Pipeline Stage</td><td>Stage: <code>04 · Handoff Atena · No Sé</code></td></tr>
+                <tr><td>Step 2 — Update Custom Field</td><td>Field: <code>Handoff Motivo</code> · Value: <code>no_se</code></td></tr>
+                <tr><td>Step 3 — Assign User</td><td>User: <code>Atena (humana)</code></td></tr>
+                <tr><td>Step 4 — Add Contact Tag</td><td>Tags: <code>handoff_no_se</code> + <code>kb_gap</code> (segundo tag para reportar y mejorar KB)</td></tr>
+                <tr><td>Step 5 — Update Conversation AI Bot and Status</td><td>Bot: <code>Atena · AL</code> · Status: <code>Inactive</code></td></tr>
+                <tr><td>Step 6 — Internal Notification</td><td>Title: <code>❓ Bot no supo responder</code> · Body: <code>{{contact.first_name}} ({{contact.phone}}) hizo una pregunta que el bot no supo responder. Revisar conversación y considerar agregar a Knowledge Base.</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">B · Prompt para Workflow AI Builder</p>
+          <pre class="prompt-block">Crea un workflow llamado WF4 · Handoff No Sé. El trigger es Workflow Triggered from Bot Action, se dispara desde el bot Atena · AL cuando el bot no encuentra respuesta en la Knowledge Base. El primer paso mueve la etapa del pipeline a 04 · Handoff Atena · No Sé. Después actualiza el custom field Handoff Motivo con el valor no_se. Asigna el contacto al usuario Atena humana mediante Assign User. Agrega dos tags al contacto: handoff_no_se y kb_gap, este último sirve para identificar conversaciones donde el bot tuvo gaps de conocimiento y poder mejorar la Knowledge Base con el tiempo. Ejecuta Update Conversation AI Bot and Status desactivando el bot Atena · AL con status Inactive. Finalmente envía notificación interna a Atena humana con título Bot no supo responder y body que incluye nombre, teléfono y un recordatorio de revisar la conversación y considerar agregar la pregunta a la Knowledge Base. El propósito doble es: derivar al lead a humana para no perderlo, y generar visibilidad sobre gaps de KB para mejorarla iterativamente.</pre>
+        </div>
+      </details>
+
+      <!-- WF5 -->
+      <details class="wf-card" id="wf5">
+        <summary>
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="font-mono text-[11px] text-violet-300/80">WF5</span>
+            <h3 class="text-lg font-semibold text-zinc-100">Handoff Pedido Humano</h3>
+            <span class="pill pill-violet">Bot Action</span>
+            <span class="pill pill-rose">🔥 Prioritario</span>
+          </div>
+        </summary>
+        <div class="wf-body">
+          <p class="serif-italic text-zinc-400 mb-5">Paciente pide explícitamente humano o expresa urgencia/dolor → handoff inmediato, prioritario. Si urgencia=urgente agrega tag adicional para ordenar el inbox.</p>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">A · Configuración manual UI</p>
+          <div class="overflow-x-auto mb-6">
+            <table class="step-table">
+              <tbody>
+                <tr><td>Workflow Name</td><td><code>WF5 · Handoff Pedido Humano</code></td></tr>
+                <tr><td>Trigger</td><td><code>Workflow Triggered from Bot Action</code></td></tr>
+                <tr><td>Step 1 — Move Pipeline Stage</td><td>Stage: <code>04 · Handoff Atena · Pedido Humano</code></td></tr>
+                <tr><td>Step 2 — Update Custom Field</td><td>Field: <code>Handoff Motivo</code> · Value: <code>pedido_humano</code></td></tr>
+                <tr><td>Step 3 — Assign User</td><td>User: <code>Atena (humana)</code></td></tr>
+                <tr><td>Step 4 — Add Contact Tag</td><td>Tag: <code>handoff_pedido_humano</code> (+ <code>urgente</code> si <code>urgencia = urgente</code>)</td></tr>
+                <tr><td>Step 5 — Update Conversation AI Bot and Status</td><td>Bot: <code>Atena · AL</code> · Status: <code>Inactive</code></td></tr>
+                <tr><td>Step 6 — Internal Notification</td><td>Title: <code>🔥 Paciente pide humano</code> · Body: <code>{{contact.first_name}} ({{contact.phone}}) pidió hablar con persona. Urgencia: {{contact.urgencia}}. Atender lo antes posible.</code> · <strong>Mark as priority</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">B · Prompt para Workflow AI Builder</p>
+          <pre class="prompt-block">Crea un workflow llamado WF5 · Handoff Pedido Humano. El trigger es Workflow Triggered from Bot Action, se dispara desde el bot Atena · AL cuando un paciente pide explícitamente hablar con una persona, expresa frustración con el chat, o menciona urgencia médica o dolor agudo. El primer paso mueve la etapa del pipeline a 04 · Handoff Atena · Pedido Humano. Después actualiza el custom field Handoff Motivo con el valor pedido_humano. Asigna el contacto al usuario Atena humana mediante Assign User. Agrega el tag handoff_pedido_humano al contacto, y si el campo urgencia es igual a urgente agrega además el tag urgente para priorizar visualmente en el inbox. Ejecuta Update Conversation AI Bot and Status desactivando el bot Atena · AL con status Inactive. Finalmente envía una notificación interna marcada como prioritaria a Atena humana con título Paciente pide humano y body que incluye nombre, teléfono y nivel de urgencia, indicándole que debe atender lo antes posible. El propósito es responder lo más rápido posible a pacientes que muestran fricción o urgencia, evitando que el bot insista cuando el lead ya rechazó la interacción automatizada.</pre>
+        </div>
+      </details>
+
+      <!-- WF6 -->
+      <details class="wf-card" id="wf6">
+        <summary>
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="font-mono text-[11px] text-violet-300/80">WF6</span>
+            <h3 class="text-lg font-semibold text-zinc-100">Auto follow-up bot Atena · 2h y 24h</h3>
+            <span class="pill pill-violet">Customer Replied</span>
+            <span class="pill pill-amber">Mecanismo de seguimiento de AL</span>
+          </div>
+        </summary>
+        <div class="wf-body">
+          <p class="serif-italic text-zinc-400 mb-5">Si el paciente deja de responder mientras el bot está activo → bot vuelve a contactarlo a las 2 horas y a las 24 horas. <strong class="text-zinc-200 not-italic">Esta es la implementación de seguimiento automático para AL — alternativa al feature nativo del bot</strong> (ver §4.9).</p>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">A · Configuración manual UI</p>
+          <div class="overflow-x-auto mb-6">
+            <table class="step-table">
+              <tbody>
+                <tr><td>Workflow Name</td><td><code>WF6 · Auto follow-up bot Atena</code></td></tr>
+                <tr><td>Trigger</td><td><code>Customer Replied</code> (re-trigger cada vez que el paciente responde, lo cual resetea el timer)</td></tr>
+                <tr><td>Trigger Filters</td><td><code>contact.tag</code> contains <code>handoff_*</code> → False (NO disparar si ya se hizo handoff a humana)</td></tr>
+                <tr><td>Step 1 — If/Else</td><td>Condition: <code>Conversation AI Bot Status = Active</code>. Si no está activo, end</td></tr>
+                <tr><td>Step 2 — Wait Step</td><td>Wait for 2 hours OR Customer Replied</td></tr>
+                <tr><td>Step 3 — If/Else</td><td>¿el paciente respondió en las últimas 2h? Si SÍ → end · si NO → continuar</td></tr>
+                <tr><td>Step 4 — Send Message</td><td>Channel: WhatsApp · Body: <code>Hola {{contact.first_name}}, ¿pudiste pensar lo que charlamos? Cualquier consulta acá estoy 🌷 Atena</code></td></tr>
+                <tr><td>Step 5 — Wait Step</td><td>Wait for 22 hours OR Customer Replied (total: 2h + 22h = 24h desde el último mensaje)</td></tr>
+                <tr><td>Step 6 — If/Else</td><td>¿respondió? Si SÍ → end · si NO → continuar</td></tr>
+                <tr><td>Step 7 — Send Message</td><td>Body: <code>Hola {{contact.first_name}}, te escribo de nuevo por las dudas. Si seguís interesado en el tratamiento te puedo seguir ayudando. Cualquier cosa, escribime 🌷 Atena</code></td></tr>
+                <tr><td>Step 8 — Add Contact Tag</td><td>Tag: <code>follow_up_completado</code> (para reporte)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">B · Prompt para Workflow AI Builder</p>
+          <pre class="prompt-block">Crea un workflow llamado WF6 · Auto follow-up bot Atena. El trigger es Customer Replied con filtros que excluyen contactos que ya tienen tags que comienzan con handoff_, porque si ya se hizo handoff a la humana el follow-up automático no aplica. El primer paso es un If/Else que evalúa si el bot Atena · AL está en status Active para ese contacto: si no está activo termina el workflow. Si está activo, agrega un Wait Step de 2 horas con la opción de salir si el cliente responde. Después de las 2 horas, evalúa con un If/Else si el paciente respondió: si respondió termina el workflow porque la conversación volvió a activarse, si no respondió continúa. Envía un mensaje por WhatsApp con el texto: Hola {{contact.first_name}}, ¿pudiste pensar lo que charlamos? Cualquier consulta acá estoy, firmado por Atena. Después agrega un nuevo Wait Step de 22 horas con salida si responde, totalizando 24 horas desde el último mensaje. Evalúa de nuevo si respondió: si sí termina, si no continúa. Envía un segundo mensaje con el texto: Hola {{contact.first_name}}, te escribo de nuevo por las dudas, si seguís interesado en el tratamiento te puedo seguir ayudando, cualquier cosa escribime, firmado por Atena. Finalmente agrega el tag follow_up_completado al contacto para fines de reporte. El propósito es recuperar leads que no terminaron la conversación con el bot, dándoles dos recordatorios suaves antes de dejarlos en el pipeline pasivo.</pre>
+
+          <div class="mt-5 p-4 rounded-xl bg-amber-950/20 border border-amber-400/20">
+            <p class="text-xs text-amber-200 font-medium mb-1">⚠️ Trade-off del trigger Customer Replied</p>
+            <p class="text-[12px] text-zinc-400 leading-relaxed">Este WF se reinicia cada vez que el paciente escribe — eso es intencional. Si en testing se ve que dispara mal, se puede mover a trigger <code class="font-mono text-amber-300">Wait until contact has been inactive for 2 hours</code> (si GHL lo expone) o a un trigger custom.</p>
+          </div>
+        </div>
+      </details>
+
+      <!-- WF7 -->
+      <details class="wf-card" id="wf7">
+        <summary>
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="font-mono text-[11px] text-violet-300/80">WF7</span>
+            <h3 class="text-lg font-semibold text-zinc-100">Seña enviada</h3>
+            <span class="pill pill-violet">Tag Added</span>
+            <span class="pill pill-emerald">Atena humana lo dispara</span>
+          </div>
+        </summary>
+        <div class="wf-body">
+          <p class="serif-italic text-zinc-400 mb-5">Marca el momento en que Atena humana mandó el alias para reservar turno → mover etapa pipeline + trackear pago de seña como filtro de calificación.</p>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">A · Configuración manual UI</p>
+          <div class="overflow-x-auto mb-6">
+            <table class="step-table">
+              <tbody>
+                <tr><td>Workflow Name</td><td><code>WF7 · Seña enviada</code></td></tr>
+                <tr><td>Trigger</td><td><code>Tag Added to Contact</code> · Tag: <code>sena_enviada</code> (Atena humana agrega este tag manualmente desde el contacto cuando manda el alias)</td></tr>
+                <tr><td>Step 1 — Update Custom Field</td><td>Field: <code>Alias Enviado At</code> · Value: <code>{{date.now}}</code></td></tr>
+                <tr><td>Step 2 — Move Pipeline Stage</td><td>Stage: <code>06 · Seña enviada</code></td></tr>
+                <tr><td>Step 3 — Wait Step</td><td>24 horas</td></tr>
+                <tr><td>Step 4 — If/Else</td><td><code>contact.tag contains sena_pagada</code> → si pagó, mover a stage <code>07 · Turno confirmado</code> y end · si no, continuar</td></tr>
+                <tr><td>Step 5 — Internal Notification</td><td>Title: <code>⏰ Seña sin pagar 24h</code> · Body: <code>{{contact.first_name}} recibió alias hace 24h y no pagó. Revisar si llamar/escribir.</code></td></tr>
+                <tr><td>Step 6 — Add Contact Tag</td><td>Tag: <code>sena_sin_pagar_24h</code> (para reporte y eventual nurturing)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-2">B · Prompt para Workflow AI Builder</p>
+          <pre class="prompt-block">Crea un workflow llamado WF7 · Seña enviada. El trigger es Tag Added to Contact y el tag específico es sena_enviada, que Atena humana agrega manualmente desde el perfil del contacto cuando le manda el alias bancario para que pague la seña. El primer paso actualiza el custom field Alias Enviado At con el timestamp actual del workflow. Después mueve la etapa del pipeline a 06 · Seña enviada. Agrega un Wait Step de 24 horas. Después de las 24 horas evalúa con un If/Else si el contacto tiene el tag sena_pagada: si lo tiene, mueve la etapa del pipeline a 07 · Turno confirmado y termina el workflow porque ya pagó; si no lo tiene, continúa. Envía una notificación interna a Atena humana con título Seña sin pagar 24h y body indicándole que el paciente recibió el alias hace 24 horas y no pagó, sugiriendo que considere llamar o escribir. Por último agrega el tag sena_sin_pagar_24h al contacto, que sirve para reportes y eventualmente para una secuencia de nurturing futura. El propósito es trackear el filtro de calificación: quien paga la seña es lead real, quien no paga queda visible para que la humana decida si retomar o descartar.</pre>
+        </div>
+      </details>
+
+      </div><!-- /auto-workflows -->
+
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 04 · BOT DE IA                                                -->
+    <!-- ============================================================ -->
+    <section id="bot" class="mb-24 scroll-mt-12">
+      <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-3">04 · Bot de IA</p>
+      <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-3">Configuración del bot Atena</h2>
+      <p class="serif-italic text-zinc-400 mb-10 max-w-3xl">Lo que se pega dentro del bot en GHL: settings, los 3 campos de prompt, los Bot Actions (Trigger Workflows + Add Contact Info + Stop Bot), y referencia de los features que no aplican a AL hoy (Bot Transfer, Reserva de Cita).</p>
+
+      <!-- 4.1 BOT SETTINGS -->
+      <div id="bot-settings" class="mb-12 scroll-mt-12">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-2">4.1</p>
+        <h3 class="text-2xl font-semibold tracking-tight mb-2 text-zinc-100">Bot Settings</h3>
+        <p class="text-zinc-400 mb-5 text-sm">Configuración general del bot · primera pantalla al crearlo en GHL.</p>
+
+        <div class="action-card">
+          <div class="action-grid">
+            <div class="label">Bot Name</div>
+            <div class="value-mono">Atena · AL <span class="text-zinc-500 font-sans text-[12px]">(interno; el contacto ve "Atena")</span></div>
+            <div class="label">Bot Type</div>
+            <div class="value-strong">Conversation AI <span class="text-zinc-500 text-[12px]">(no Workflow Bot)</span></div>
+            <div class="label">Idioma</div>
+            <div class="value-strong">Español (Argentina)</div>
+            <div class="label">Canal</div>
+            <div class="value-strong">WhatsApp</div>
+            <div class="label">Initial Message</div>
+            <div class="value-desc"><span class="serif-italic text-amber-300/80">(vacío — el WF1 manda el saludo, no el bot)</span></div>
+            <div class="label">Modelo</div>
+            <div class="value-mono">GPT-4o</div>
+            <div class="label">Behavior type</div>
+            <div class="value-strong">Autopilot</div>
+          </div>
+        </div>
+
+        <div class="mt-4 p-4 rounded-xl bg-amber-950/20 border border-amber-400/20">
+          <p class="text-xs text-amber-200 font-medium mb-1">⚠️ Initial Message vacío — importante</p>
+          <p class="text-[12px] text-zinc-400 leading-relaxed">El mensaje de bienvenida lo dispara <a href="#wf1" class="text-amber-300 hover:underline">WF1</a> como Send Message antes de activar el bot. Si lo ponés en ambos lados, el contacto recibe el saludo dos veces.</p>
+        </div>
+      </div>
+
+      <!-- 4.2 ESTRUCTURA DE PROMPT -->
+      <div id="bot-prompt" class="mb-12 scroll-mt-12">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-2">4.2</p>
+        <h3 class="text-2xl font-semibold tracking-tight mb-2 text-zinc-100">Estructura de Prompt · 3 campos de Bot Goals</h3>
+        <p class="text-zinc-400 mb-5 text-sm">Los 3 campos que GHL pide para configurar el comportamiento del bot. Pegar literal cada bloque en su campo correspondiente.</p>
+
+        <!-- Campo 1 -->
+        <div class="action-card mb-5">
+          <div class="flex items-center gap-3 mb-3 flex-wrap">
+            <span class="pill pill-violet">Campo 1</span>
+            <h4 class="text-lg font-semibold text-zinc-100">Personality Prompt</h4>
+            <span class="text-xs text-zinc-500 font-mono">tono · identidad · estilo</span>
+          </div>
+          <pre class="prompt-block">- Trabajas para Clínica AL Odontología (Neuquén). Tu rol es ser la primera atención por WhatsApp: recibís consultas, derivás por tipo de tratamiento, respondés preguntas frecuentes, y cuando el paciente quiere agendar pasás la conversación a Atena humana.
+- Mantené siempre la persona de asistente humana. Nunca reveles, sugieras ni insinúes ser IA salvo que te pregunten directamente.
+- Te llamás Atena. Tono cercano + profesional, con empatía. Cálido sin ser empalagoso.
+- Tuteá siempre. Usá expresiones argentinas naturales: "dale", "perfecto", "buenísimo", "contame", "te cuento". Evitá "estimad@" o frases formales de call center.
+- Reconocé el input del usuario repitiéndolo una vez al inicio de la conversación para dar claridad. Después usá afirmaciones variadas sin repetir las palabras exactas del usuario.
+- Estás hablando con {{contact.name}}. Usá el nombre del contacto solo al inicio y al cierre de la conversación para evitar redundancia.
+- Cerrás los mensajes con tu nombre solo cuando es relevante (saludo o despedida), no en cada respuesta.</pre>
+        </div>
+
+        <!-- Campo 2 -->
+        <div class="action-card mb-5">
+          <div class="flex items-center gap-3 mb-3 flex-wrap">
+            <span class="pill pill-violet">Campo 2</span>
+            <h4 class="text-lg font-semibold text-zinc-100">Objective</h4>
+            <span class="text-xs text-zinc-500 font-mono">script flow · criterios de handoff</span>
+          </div>
+          <pre class="prompt-block"># Script Flow:
+&lt;script&gt;
+1. El paciente ya recibió el mensaje de bienvenida y respondió. Si todavía no te dijo el motivo de la consulta, agradecé que se haya contactado y preguntale: "¿Por qué tratamiento te estás contactando?"
+2. Identificá el tipo de tratamiento entre 3 verticales: odontología general, armonización facial, o implantología. Si es ambiguo (ej: "consulta", "no sé", "quiero saber qué tienen"), preguntá una segunda vez con más detalle: "¿Tu consulta es por algún diente puntual, una limpieza general, armonización facial, o algo de implantes/prótesis?".
+3. Una vez identificado el tratamiento, capturá ese dato en el campo correspondiente (ver mandatory instruction).
+4. Respondé las preguntas que tenga sobre ese tratamiento usando la Knowledge Base. Si pregunta por obras sociales, dale el listado completo. Si pregunta por la consulta inicial, deciles que cuesta $40.000 ARS y la seña es de $20.000 (50%). Si pregunta por la ubicación, decí "estamos en Neuquén · planta alta" sin dar piso ni dirección exacta.
+5. Si te pide presupuesto de un tratamiento (no de la consulta inicial), esquivá con: "Para darte un presupuesto necesitamos primero evaluarte en consulta y hacer una tomografía. Solo así podemos saber qué tratamiento exacto necesitás y cuánto sale". Nunca tires un número de tratamiento.
+6. Cuando el paciente exprese intención de agendar un turno (frases tipo "quiero sacar turno", "me interesa", "cuándo puedo ir", "agendame"), confirmá una vez: "¿Te gustaría que coordinemos un turno para que vengas a la clínica?". Si dice que sí, ejecutá el handoff a Atena humana (Trigger Workflow "Handoff Agendar").
+7. Si en cualquier momento el paciente envía una foto, imagen, video o archivo adjunto: NO intentes interpretarlo. Decí: "Recibí tu foto. Para revisarla bien la va a ver Atena, te responde en breve". Y ejecutá el handoff (Trigger Workflow "Handoff Imagen").
+8. Si el paciente hace una pregunta que no podés responder con la Knowledge Base, NO inventes. Decí: "Dejame chequear ese dato con el equipo y te respondo en un rato". Y ejecutá el handoff (Trigger Workflow "Handoff No Sé").
+9. Si el paciente pide explícitamente hablar con una persona ("quiero hablar con alguien", "me podés pasar con un humano", "no me sirve el bot"), ejecutá el handoff (Trigger Workflow "Handoff Pedido Humano") sin discutir.
+&lt;/script&gt;
+
+# Criterio de handoff:
+La conversación pasa a Atena humana en cualquiera de estos 4 momentos:
+- El paciente quiere agendar un turno (paso 6)
+- El paciente envía una imagen/foto/video (paso 7)
+- El bot no sabe la respuesta (paso 8)
+- El paciente pide hablar con humano (paso 9)
+
+# Criterio de NO handoff:
+NO transferir si:
+- El paciente solo está preguntando por información (precio consulta, obras sociales, ubicación, qué hace tal tratamiento). Estos los respondés vos con la KB.
+- El paciente pide presupuesto de tratamiento. Esquivá con la frase del paso 5, no transfieras.
+- El paciente se está despidiendo. Eso lo maneja el Stop Bot, no el handoff.</pre>
+        </div>
+
+        <!-- Campo 3 -->
+        <div class="action-card mb-5">
+          <div class="flex items-center gap-3 mb-3 flex-wrap">
+            <span class="pill pill-violet">Campo 3</span>
+            <h4 class="text-lg font-semibold text-zinc-100">Additional Information</h4>
+            <span class="text-xs text-zinc-500 font-mono">reglas · contexto · captura de datos</span>
+          </div>
+          <pre class="prompt-block"># Reglas:
+&lt;rules&gt;
+- Mantené las respuestas cortas, directas, menos de 35 palabras por mensaje. Si necesitás dar info más larga (ej: listado de obras sociales), partilo en 2-3 mensajes cortos.
+- Esperá la respuesta del paciente antes de pasar a la siguiente pregunta del Script. Nunca dispares dos preguntas seguidas en un solo mensaje.
+- Nunca inventes información que no esté en la Knowledge Base o en este prompt. Si no sabés algo, ejecutá el handoff "No Sé" (paso 8 del Script).
+- Nunca des precios ni presupuestos de tratamientos. Solo el de la consulta inicial ($40.000 + seña $20.000). Para todo lo demás, usá la frase de esquive del paso 5.
+- Nunca des la dirección exacta de la clínica (calle, número, piso). Solo "Neuquén · planta alta". La dirección completa la entrega Atena humana al confirmar el turno.
+- Nunca interpretes imágenes clínicas (radiografías, fotos de muelas, dientes). Ejecutá el handoff "Imagen".
+- Nunca te disculpes por ser IA ni admitas serlo proactivamente. Si te preguntan directo "¿sos un bot?", respondé: "Soy Atena, te estoy atendiendo desde el WhatsApp de la clínica. ¿En qué te ayudo?".
+- Si el paciente menciona urgencia o dolor agudo, ejecutá el handoff "Pedido Humano" inmediatamente, sin más preguntas.
+- Hablá en singular y tuteá. Nunca uses "vosotros", "ustedes formal", ni "señor/señora".
+&lt;/rules&gt;
+
+# Datos clave de la clínica:
+&lt;context&gt;
+- Nombre: Clínica AL Odontología
+- Ubicación pública: Neuquén · planta alta (sin piso ni dirección exacta)
+- Consulta inicial: $40.000 ARS · seña 50% = $20.000 ARS
+- Pago de seña: por alias bancario o presencial en clínica en horario razonable
+- Tratamientos principales: odontología general · armonización facial · implantología (24 horas: implantes + corona + carillas)
+- Operación: 24/7 (vos contestás siempre; Atena humana toma cuando se hace handoff)
+&lt;/context&gt;
+
+###mandatory instruction: durante la conversación, captura estos datos en el orden indicado, entre respuesta y respuesta del Script, no todos al inicio:
+1. Después del saludo inicial, si el paciente no se presentó, pedile el nombre del contacto.
+2. En el paso 2-3 del Script, una vez identificado el tipo de tratamiento, guardá el tipo de tratamiento del contacto (odontología general / armonización facial / implantología).
+3. Si el paciente menciona algo específico que está buscando (ej: "necesito un implante", "quiero blanqueamiento", "tengo dolor en una muela"), guardá el motivo de consulta del contacto.
+4. Si en algún momento el paciente menciona urgencia o tiempo (ej: "tengo dolor", "es urgente", "no tengo apuro"), guardá el nivel de urgencia del contacto.
+5. Si se ejecuta un handoff a Atena humana, guardá el motivo del handoff del contacto (agendar / imagen / no sé / pedido humano).</pre>
+        </div>
+      </div>
+
+      <!-- 4.3 BOT ACTIONS · TRIGGER WORKFLOWS -->
+      <div id="bot-actions" class="mb-12 scroll-mt-12">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-2">4.3</p>
+        <h3 class="text-2xl font-semibold tracking-tight mb-2 text-zinc-100">Automatizaciones del bot · Trigger Workflows</h3>
+        <p class="text-zinc-400 mb-5 text-sm">4 Bot Actions tipo "Trigger Workflow" — uno por cada condición de handoff. Cada uno dispara el WF correspondiente en sección 03.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="action-card">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="font-mono text-[10px] text-violet-300/80">#1</span>
+              <h4 class="text-sm font-semibold text-zinc-100">Handoff Agendar</h4>
+              <a href="#wf2" class="ml-auto text-[11px] text-violet-300 hover:underline">→ WF2</a>
+            </div>
+            <div class="action-grid">
+              <div class="label">Action Name</div>
+              <div class="value-mono">Handoff Agendar</div>
+              <div class="label">Workflow</div>
+              <div class="value-mono">WF · Handoff Agendar</div>
+              <div class="label">Trigger Condition</div>
+              <div class="value-desc">El paciente expresa intención clara de sacar un turno, agendar una cita o ir presencialmente a la clínica. Frases tipo "quiero sacar turno", "me interesa", "cuándo puedo ir", "agendame", "reservame".</div>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="font-mono text-[10px] text-violet-300/80">#2</span>
+              <h4 class="text-sm font-semibold text-zinc-100">Handoff Imagen</h4>
+              <a href="#wf3" class="ml-auto text-[11px] text-violet-300 hover:underline">→ WF3</a>
+            </div>
+            <div class="action-grid">
+              <div class="label">Action Name</div>
+              <div class="value-mono">Handoff Imagen</div>
+              <div class="label">Workflow</div>
+              <div class="value-mono">WF · Handoff Imagen</div>
+              <div class="label">Trigger Condition</div>
+              <div class="value-desc">El paciente envía una foto, imagen, video, audio extenso o archivo adjunto que el bot no puede interpretar de forma segura. Aplica especialmente a fotos clínicas (dientes, muelas, radiografías).</div>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="font-mono text-[10px] text-violet-300/80">#3</span>
+              <h4 class="text-sm font-semibold text-zinc-100">Handoff No Sé</h4>
+              <a href="#wf4" class="ml-auto text-[11px] text-violet-300 hover:underline">→ WF4</a>
+            </div>
+            <div class="action-grid">
+              <div class="label">Action Name</div>
+              <div class="value-mono">Handoff No Sé</div>
+              <div class="label">Workflow</div>
+              <div class="value-mono">WF · Handoff No Sé</div>
+              <div class="label">Trigger Condition</div>
+              <div class="value-desc">El bot no encuentra la respuesta en la Knowledge Base ni puede inferirla del contexto. El paciente hizo una pregunta que requiere intervención humana (ej: pide presupuesto específico, pregunta por convenios particulares no listados, consulta médica que requiere criterio profesional).</div>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="font-mono text-[10px] text-violet-300/80">#4</span>
+              <h4 class="text-sm font-semibold text-zinc-100">Handoff Pedido Humano</h4>
+              <a href="#wf5" class="ml-auto text-[11px] text-violet-300 hover:underline">→ WF5</a>
+            </div>
+            <div class="action-grid">
+              <div class="label">Action Name</div>
+              <div class="value-mono">Handoff Pedido Humano</div>
+              <div class="label">Workflow</div>
+              <div class="value-mono">WF · Handoff Pedido Humano</div>
+              <div class="label">Trigger Condition</div>
+              <div class="value-desc">El paciente pide explícitamente hablar con una persona, expresa frustración con el chat, menciona urgencia médica, dolor agudo, o dice frases tipo "quiero hablar con alguien", "pasame con humano", "no me sirve el bot", "tengo mucho dolor".</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 p-4 rounded-xl bg-emerald-950/20 border border-emerald-400/20">
+          <p class="text-xs text-emerald-200 font-medium mb-1">✅ Cuota de Trigger Workflows</p>
+          <p class="text-[12px] text-zinc-400 leading-relaxed">Máximo 5 Trigger Workflows por bot. Estamos usando 4. Queda 1 slot libre para casos futuros (ej: "Handoff Reagendar" si después agregamos lógica de pacientes existentes).</p>
+        </div>
+      </div>
+
+      <!-- 4.4 STOP BOT -->
+      <div id="bot-stop" class="mb-12 scroll-mt-12">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-2">4.4</p>
+        <h3 class="text-2xl font-semibold tracking-tight mb-2 text-zinc-100">Detener Bot · Stop Bot</h3>
+        <p class="text-zinc-400 mb-5 text-sm">2 escenarios configurables como Bot Action. El tercer escenario (handoff a humana) NO va acá — va dentro del WF de handoff (ver nota abajo).</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="action-card">
+            <div class="flex items-center gap-2 mb-3 flex-wrap">
+              <span class="font-mono text-[10px] text-violet-300/80">#1</span>
+              <h4 class="text-sm font-semibold text-zinc-100">Despedida amigable</h4>
+              <span class="pill pill-zinc">despedida_amigable</span>
+            </div>
+            <div class="action-grid">
+              <div class="label">Scenario Name</div>
+              <div class="value-mono">Despedida amigable</div>
+              <div class="label">Trigger Condition</div>
+              <div class="value-desc">El paciente cierra la conversación de forma amigable, agradece y se despide sin haber hecho pedido específico.</div>
+              <div class="label">Examples</div>
+              <div class="value-desc">"gracias, después te escribo" · "listo, gracias" · "chau" · "nos vemos" · "perfecto, gracias" · "ok, gracias" · "buenísimo, gracias" · "te aviso después"</div>
+              <div class="label">Final Message</div>
+              <div class="value-desc">Dale, quedo atenta a cualquier consulta. ¡Que tengas buen día! 🌷</div>
+              <div class="label">Reactivate Bot Timer</div>
+              <div class="value-strong">60 minutos</div>
+              <div class="label">Custom Tag</div>
+              <div class="value-mono">despedida_amigable</div>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="flex items-center gap-2 mb-3 flex-wrap">
+              <span class="font-mono text-[10px] text-violet-300/80">#2</span>
+              <h4 class="text-sm font-semibold text-zinc-100">No interesado</h4>
+              <span class="pill pill-zinc">no_interesado</span>
+            </div>
+            <div class="action-grid">
+              <div class="label">Scenario Name</div>
+              <div class="value-mono">No interesado</div>
+              <div class="label">Trigger Condition</div>
+              <div class="value-desc">El paciente expresa que ya no le interesa el tratamiento, que era solo curiosidad, que cambió de idea, o pide explícitamente que no le escriban más.</div>
+              <div class="label">Examples</div>
+              <div class="value-desc">"no me interesa" · "ya no quiero" · "era solo para preguntar" · "déjenme tranquilo" · "no escriban más" · "lo pensé y no" · "no, gracias, ya no"</div>
+              <div class="label">Final Message</div>
+              <div class="value-desc">Listo, ningún problema. Si en algún momento querés consultarnos por algo, escribinos cuando quieras 🌷</div>
+              <div class="label">Reactivate Bot Timer</div>
+              <div class="value-strong">24 horas</div>
+              <div class="label">Custom Tag</div>
+              <div class="value-mono">no_interesado</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 p-4 rounded-xl bg-cyan-950/20 border border-cyan-400/20">
+          <p class="text-xs text-cyan-200 font-medium mb-1">ℹ️ Stop Bot #3 (post-handoff) NO va acá</p>
+          <p class="text-[12px] text-zinc-400 leading-relaxed">
+            Cuando ocurre handoff a humana, el bot se desactiva via <code class="font-mono text-cyan-300">Update Conversation AI Bot and Status</code> dentro de los WFs (ver <a href="#wf2" class="text-cyan-300 hover:underline">WF2</a>-<a href="#wf5" class="text-cyan-300 hover:underline">WF5</a>) — no como Bot Action de Stop Bot. <strong class="text-zinc-300">Por qué:</strong> el Stop Bot tiene timer fijo (5min-24h); el handoff necesita Inactive indefinido hasta que la humana reactive. Workflow action es más controlable.
+          </p>
+        </div>
+
+        <div class="mt-3 p-4 rounded-xl bg-rose-950/20 border border-rose-400/20">
+          <p class="text-xs text-rose-200 font-medium mb-1">⚠️ Anti-patrón a evitar</p>
+          <p class="text-[12px] text-zinc-400 leading-relaxed">
+            <strong class="text-zinc-300">No</strong> configurar Stop Bot con condition "pide humano" — eso lo maneja el Trigger Workflow "Handoff Pedido Humano" (<a href="#wf5" class="text-rose-300 hover:underline">WF5</a>) que tiene más prioridad porque ejecuta acciones (mover etapa, asignar usuario) además de detener al bot.
+          </p>
+        </div>
+      </div>
+
+      <!-- 4.5 INFORMACIÓN DE CONTACTO · ADD CONTACT INFO -->
+      <div id="bot-info" class="mb-12 scroll-mt-12">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-2">4.5</p>
+        <h3 class="text-2xl font-semibold tracking-tight mb-2 text-zinc-100">Información de Contacto · Add Contact Info</h3>
+        <p class="text-zinc-400 mb-5 text-sm">4 Bot Actions tipo "Add Contact Info" — uno por cada CF que llena el bot durante la conversación. Cada modal de GHL tiene 4 campos: Action Name, Which contact field, What to update, y Ejemplo de Salida.</p>
+
+        <!-- ACI #1 -->
+        <div class="action-card mb-3">
+          <div class="flex items-center gap-2 mb-3 flex-wrap">
+            <span class="font-mono text-[10px] text-cyan-300/80">#1</span>
+            <h4 class="text-sm font-semibold text-zinc-100">Tipo Tratamiento</h4>
+            <span class="pill pill-cyan">contact.tipo_tratamiento</span>
+          </div>
+          <div class="action-grid">
+            <div class="label">1 · Action Name</div>
+            <div class="value-mono">Actualizar Tipo Tratamiento</div>
+            <div class="label">2 · Which contact field</div>
+            <div class="value-mono">Tipo Tratamiento</div>
+            <div class="label">3 · What to update</div>
+            <div class="value-desc">Este campo guarda el tipo de tratamiento que motivó la consulta del paciente. Los valores válidos son: "odontología general", "armonización facial", o "implantología". Si el paciente menciona algo más específico, mapealo al más cercano.</div>
+            <div class="label">4 · Ejemplo de Salida</div>
+            <div class="value-desc">
+              <span class="pill pill-emerald">odontología general</span>
+              <span class="pill pill-emerald">armonización facial</span>
+              <span class="pill pill-emerald">implantología</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACI #2 -->
+        <div class="action-card mb-3">
+          <div class="flex items-center gap-2 mb-3 flex-wrap">
+            <span class="font-mono text-[10px] text-cyan-300/80">#2</span>
+            <h4 class="text-sm font-semibold text-zinc-100">Motivo Consulta</h4>
+            <span class="pill pill-cyan">contact.motivo_consulta</span>
+          </div>
+          <div class="action-grid">
+            <div class="label">1 · Action Name</div>
+            <div class="value-mono">Actualizar Motivo Consulta</div>
+            <div class="label">2 · Which contact field</div>
+            <div class="value-mono">Motivo Consulta</div>
+            <div class="label">3 · What to update</div>
+            <div class="value-desc">Este campo guarda lo que el paciente está buscando específicamente. Es texto libre, una frase corta de 5-15 palabras que resume su necesidad concreta.</div>
+            <div class="label">4 · Ejemplo de Salida</div>
+            <div class="value-desc space-y-1">
+              <div><span class="pill pill-emerald">Quiere implantes para reemplazar muelas de arriba</span></div>
+              <div><span class="pill pill-emerald">Tiene dolor en una muela hace 3 días</span></div>
+              <div><span class="pill pill-emerald">Pregunta por blanqueamiento dental</span></div>
+              <div><span class="pill pill-emerald">Le interesa armonización facial con ácido hialurónico</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACI #3 -->
+        <div class="action-card mb-3">
+          <div class="flex items-center gap-2 mb-3 flex-wrap">
+            <span class="font-mono text-[10px] text-cyan-300/80">#3</span>
+            <h4 class="text-sm font-semibold text-zinc-100">Urgencia</h4>
+            <span class="pill pill-cyan">contact.urgencia</span>
+          </div>
+          <div class="action-grid">
+            <div class="label">1 · Action Name</div>
+            <div class="value-mono">Actualizar Urgencia</div>
+            <div class="label">2 · Which contact field</div>
+            <div class="value-mono">Urgencia</div>
+            <div class="label">3 · What to update</div>
+            <div class="value-desc">Este campo guarda el nivel de urgencia que expresa el paciente. Solo se llena si el paciente menciona explícitamente algo sobre tiempo o dolor. Los valores válidos son: "urgente" (dolor agudo, hoy, ya), "moderada" (esta semana), "baja" (no tiene apuro), o "no_mencionada" (no dijo nada al respecto).</div>
+            <div class="label">4 · Ejemplo de Salida</div>
+            <div class="value-desc">
+              <span class="pill pill-rose">urgente</span>
+              <span class="pill pill-amber">moderada</span>
+              <span class="pill pill-emerald">baja</span>
+              <span class="pill pill-zinc">no_mencionada</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACI #4 -->
+        <div class="action-card mb-3">
+          <div class="flex items-center gap-2 mb-3 flex-wrap">
+            <span class="font-mono text-[10px] text-cyan-300/80">#4</span>
+            <h4 class="text-sm font-semibold text-zinc-100">Handoff Motivo</h4>
+            <span class="pill pill-cyan">contact.handoff_motivo</span>
+          </div>
+          <div class="action-grid">
+            <div class="label">1 · Action Name</div>
+            <div class="value-mono">Actualizar Handoff Motivo</div>
+            <div class="label">2 · Which contact field</div>
+            <div class="value-mono">Handoff Motivo</div>
+            <div class="label">3 · What to update</div>
+            <div class="value-desc">Este campo guarda el motivo por el cual se transfirió la conversación a Atena humana. Los 4 valores posibles son: "agendar" (paciente quiere sacar turno), "imagen" (envió foto/video), "no_se" (bot no supo responder), "pedido_humano" (pidió hablar con persona).</div>
+            <div class="label">4 · Ejemplo de Salida</div>
+            <div class="value-desc">
+              <span class="pill pill-blue">agendar</span>
+              <span class="pill pill-blue">imagen</span>
+              <span class="pill pill-blue">no_se</span>
+              <span class="pill pill-blue">pedido_humano</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.6 TRANSFERENCIA A HUMANO -->
+      <div id="bot-handoff" class="mb-12 scroll-mt-12">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-2">4.6</p>
+        <h3 class="text-2xl font-semibold tracking-tight mb-2 text-zinc-100">Transferencia a Humano</h3>
+        <p class="text-zinc-400 mb-5 text-sm">4 condiciones de handoff. Cada una es disparada por el Bot Action correspondiente (§4.3) y ejecutada por el WF correspondiente (§03).</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="rounded-xl bg-blue-950/30 border border-blue-400/20 p-5">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+              <span class="w-6 h-6 rounded-full bg-blue-500/30 border border-blue-400/40 flex items-center justify-center text-[11px] font-mono text-blue-200 shrink-0">1</span>
+              <p class="text-sm text-zinc-100 font-semibold">🎯 Intención de agendar</p>
+              <a href="#wf2" class="ml-auto text-[11px] text-violet-300 hover:underline">WF2 →</a>
+            </div>
+            <p class="text-[12px] text-zinc-400 leading-relaxed mb-3">El paciente expresa que quiere reservar un turno. Atena humana toma la conversación y ofrece fecha + horario concretos.</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="pill pill-blue">handoff_agendar</span>
+              <span class="pill pill-zinc">Bot → Inactive</span>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-blue-950/30 border border-blue-400/20 p-5">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+              <span class="w-6 h-6 rounded-full bg-blue-500/30 border border-blue-400/40 flex items-center justify-center text-[11px] font-mono text-blue-200 shrink-0">2</span>
+              <p class="text-sm text-zinc-100 font-semibold">📷 Foto / imagen entrante</p>
+              <a href="#wf3" class="ml-auto text-[11px] text-violet-300 hover:underline">WF3 →</a>
+            </div>
+            <p class="text-[12px] text-zinc-400 leading-relaxed mb-3">Imágenes clínicas (radiografías, fotos de muelas) requieren ojo profesional. Bot avisa a Atena, no las interpreta.</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="pill pill-blue">handoff_imagen</span>
+              <span class="pill pill-zinc">Bot → Inactive</span>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-blue-950/30 border border-blue-400/20 p-5">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+              <span class="w-6 h-6 rounded-full bg-blue-500/30 border border-blue-400/40 flex items-center justify-center text-[11px] font-mono text-blue-200 shrink-0">3</span>
+              <p class="text-sm text-zinc-100 font-semibold">❓ Bot no sabe responder</p>
+              <a href="#wf4" class="ml-auto text-[11px] text-violet-300 hover:underline">WF4 →</a>
+            </div>
+            <p class="text-[12px] text-zinc-400 leading-relaxed mb-3">Prohibido inventar. Si la KB no cubre la pregunta, levanta la mano automáticamente. Tag adicional <code class="font-mono text-amber-300">kb_gap</code> para iterar la KB.</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="pill pill-blue">handoff_no_se</span>
+              <span class="pill pill-amber">kb_gap</span>
+              <span class="pill pill-zinc">Bot → Inactive</span>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-blue-950/30 border border-blue-400/20 p-5">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+              <span class="w-6 h-6 rounded-full bg-blue-500/30 border border-blue-400/40 flex items-center justify-center text-[11px] font-mono text-blue-200 shrink-0">4</span>
+              <p class="text-sm text-zinc-100 font-semibold">🙋 Pedido explícito de humano</p>
+              <a href="#wf5" class="ml-auto text-[11px] text-violet-300 hover:underline">WF5 →</a>
+            </div>
+            <p class="text-[12px] text-zinc-400 leading-relaxed mb-3">El paciente pide hablar con persona, expresa frustración, o menciona dolor agudo. Notificación marcada como prioridad.</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="pill pill-blue">handoff_pedido_humano</span>
+              <span class="pill pill-rose">urgente (si urgencia=urgente)</span>
+              <span class="pill pill-zinc">Bot → Inactive</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.7 BOT TRANSFER (N/A · referencia) -->
+      <div id="bot-transfer" class="mb-12 scroll-mt-12">
+        <div class="flex items-center gap-3 mb-2 flex-wrap">
+          <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">4.7</p>
+          <span class="pill pill-rose">N/A para AL · referencia futura</span>
+        </div>
+        <h3 class="text-2xl font-semibold tracking-tight mb-2 text-zinc-100">Transferencia de Bot · Bot Transfer</h3>
+        <p class="text-zinc-400 mb-5 text-sm">AL Odontología corre con un único bot (Atena). Este action aplica cuando hay arquitectura multi-bot — se documenta acá como template para clientes futuros.</p>
+
+        <div class="action-card">
+          <div class="action-grid">
+            <div class="label">Qué es</div>
+            <div class="value-desc">Action atómica de GHL V2 para handoff bot→bot. Ejecuta stop del bot actual + activate del bot destino en una sola operación, manteniendo la conversación con el contacto.</div>
+
+            <div class="label">Cuándo usar</div>
+            <div class="value-desc">Sistemas multi-bot. Casos típicos: orquestador que deriva a bots especializados por vertical (compra, alquiler, servicios), o pipeline donde un bot de "qualification" pasa a un bot de "closing" tras chequear criterios.</div>
+
+            <div class="label">Cuándo NO usar</div>
+            <div class="value-desc">Si el handoff es a humano, NO se usa Bot Transfer — se usa el patrón de §4.6 (Trigger Workflow + Update Conversation AI Bot Status = Inactive + Assign User).</div>
+
+            <div class="label">Regla de ejemplos</div>
+            <div class="value-desc"><strong class="text-zinc-300">Máximo 5 frases de ejemplo</strong> por transfer en el campo "Examples". Más ejemplos no mejoran la detección y aumentan ambigüedad con otros Bot Actions.</div>
+
+            <div class="label">Configuración (campos UI)</div>
+            <div class="value-desc">
+              <span class="pill pill-violet">Action Name</span>
+              <span class="pill pill-violet">Bot Destino</span>
+              <span class="pill pill-violet">Trigger Condition</span>
+              <span class="pill pill-violet">Examples (max 5)</span>
+            </div>
+
+            <div class="label">Anti-patrón</div>
+            <div class="value-desc">Implementar bot→bot con un Workflow que haga Stop bot A + Activate bot B. Funciona pero es más frágil (el WF puede fallar entre los dos pasos, dejando al contacto sin bot activo). Bot Transfer es atómico — preferirlo siempre que esté disponible.</div>
+          </div>
+        </div>
+
+        <div class="mt-3 p-4 rounded-xl bg-cyan-950/20 border border-cyan-400/20">
+          <p class="text-xs text-cyan-200 font-medium mb-1">ℹ️ Para AL Odontología</p>
+          <p class="text-[12px] text-zinc-400 leading-relaxed">No aplica hoy — single bot. Si en el futuro se separan los flujos (ej: bot Atena recepción + bot post-consulta para seguimiento de tratamiento), entonces Bot Transfer aparece.</p>
+        </div>
+      </div>
+
+      <!-- 4.8 RESERVA DE CITA (N/A · referencia) -->
+      <div id="bot-reserva" class="mb-12 scroll-mt-12">
+        <div class="flex items-center gap-3 mb-2 flex-wrap">
+          <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">4.8</p>
+          <span class="pill pill-rose">N/A para AL · referencia futura</span>
+        </div>
+        <h3 class="text-2xl font-semibold tracking-tight mb-2 text-zinc-100">Reserva de Cita · Appointment Booking</h3>
+        <p class="text-zinc-400 mb-5 text-sm">AL Odontología no automatiza el booking — Atena humana cierra la cita después del handoff. Este modal se documenta como template replicable para clientes que sí lo necesiten.</p>
+
+        <!-- Paso 1 -->
+        <div class="action-card mb-3">
+          <div class="flex items-center gap-2 mb-3 flex-wrap">
+            <span class="font-mono text-[10px] text-violet-300/80">Paso 1</span>
+            <h4 class="text-sm font-semibold text-zinc-100">Selección de calendario</h4>
+          </div>
+          <p class="text-[12px] text-zinc-400 mb-3">Elegir si el bot reserva sobre 1 calendario fijo o entre varios.</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="rounded-xl border border-violet-400/30 bg-violet-950/20 p-4">
+              <p class="text-sm font-semibold text-zinc-100 mb-1">Calendario único</p>
+              <p class="text-[11px] text-zinc-400 leading-relaxed">Utiliza un único calendario para todas las citas reservadas.</p>
+            </div>
+            <div class="rounded-xl border border-white/[0.08] bg-zinc-950/60 p-4">
+              <p class="text-sm font-semibold text-zinc-100 mb-1">Múltiples calendarios</p>
+              <p class="text-[11px] text-zinc-400 leading-relaxed">Deja que la IA elija entre varios calendarios al reservar citas.</p>
+            </div>
+          </div>
+          <p class="text-[11px] text-zinc-500 mt-3 font-mono">+ dropdown: <span class="text-zinc-400">Seleccionar calendario</span> (consulta franjas horarias y reserva)</p>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="action-card mb-3">
+          <div class="flex items-center gap-2 mb-3 flex-wrap">
+            <span class="font-mono text-[10px] text-violet-300/80">Paso 2</span>
+            <h4 class="text-sm font-semibold text-zinc-100">Opciones avanzadas</h4>
+          </div>
+          <p class="text-[12px] text-zinc-400 mb-4">4 checkboxes para configurar comportamientos adicionales.</p>
+
+          <div class="space-y-2">
+            <div class="flex gap-3 items-start p-3 rounded-lg bg-zinc-950/50 border border-white/[0.04]">
+              <span class="font-mono text-[10px] text-zinc-500 mt-0.5 shrink-0">☐ 1</span>
+              <div>
+                <p class="text-sm text-zinc-200 font-medium">No reservar cita (solo enviar el enlace de reserva)</p>
+                <p class="text-[11px] text-zinc-500">El bot deja de reservar y manda directo el link al contacto.</p>
+              </div>
+            </div>
+            <div class="flex gap-3 items-start p-3 rounded-lg bg-zinc-950/50 border border-white/[0.04]">
+              <span class="font-mono text-[10px] text-zinc-500 mt-0.5 shrink-0">☐ 2</span>
+              <div>
+                <p class="text-sm text-zinc-200 font-medium">Pausar las respuestas del bot después de la reserva</p>
+                <p class="text-[11px] text-zinc-500">Deshabilitar más respuestas del bot tras reservar con éxito.</p>
+              </div>
+            </div>
+            <div class="flex gap-3 items-start p-3 rounded-lg bg-zinc-950/50 border border-white/[0.04]">
+              <span class="font-mono text-[10px] text-zinc-500 mt-0.5 shrink-0">☐ 3</span>
+              <div>
+                <p class="text-sm text-zinc-200 font-medium">Activar el flujo de trabajo tras la reserva</p>
+                <p class="text-[11px] text-zinc-500">Ejecutar workflows específicos cuando se haya completado la reserva.</p>
+              </div>
+            </div>
+            <div class="flex gap-3 items-start p-3 rounded-lg bg-zinc-950/50 border border-white/[0.04]">
+              <span class="font-mono text-[10px] text-zinc-500 mt-0.5 shrink-0">☐ 4</span>
+              <div>
+                <p class="text-sm text-zinc-200 font-medium">Transferir a un empleado tras reservar una cita</p>
+                <p class="text-[11px] text-zinc-500">Asignar a un empleado al completar la reserva.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Toggles independientes -->
+          <div class="mt-5 pt-5 border-t border-white/[0.04]">
+            <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-3">Toggles independientes</p>
+            <div class="space-y-2">
+              <div class="flex gap-3 items-start p-3 rounded-lg bg-zinc-950/50 border border-white/[0.04]">
+                <span class="font-mono text-[10px] text-zinc-500 mt-0.5 shrink-0">⊙</span>
+                <div>
+                  <p class="text-sm text-zinc-200 font-medium">Permitir que el bot anule la cita</p>
+                  <p class="text-[11px] text-zinc-500">Habilita que el bot de IA cancele cualquier cita existente.</p>
+                </div>
+              </div>
+              <div class="flex gap-3 items-start p-3 rounded-lg bg-zinc-950/50 border border-white/[0.04]">
+                <span class="font-mono text-[10px] text-zinc-500 mt-0.5 shrink-0">⊙</span>
+                <div>
+                  <p class="text-sm text-zinc-200 font-medium">Permitir que el bot reprograme la cita</p>
+                  <p class="text-[11px] text-zinc-500">Habilita que el bot de IA reprograme cualquier cita existente.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-amber-950/20 border border-amber-400/20">
+          <p class="text-xs text-amber-200 font-medium mb-1">⚠️ Nota del modal · GHL</p>
+          <p class="text-[12px] text-zinc-400 leading-relaxed">"Asegúrese de que su mensaje no incluya instrucciones como «No puedo ayudar con cancelaciones o reprogramación» cuando habilite estas funciones. Si activás los toggles de cancelar/reprogramar, el bot necesita libertad en el prompt para ejecutarlos — no escribir reglas contradictorias en Personality o Objective."</p>
+        </div>
+      </div>
+
+      <!-- 4.9 SEGUIMIENTO AUTOMÁTICO -->
+      <div id="bot-followup" class="mb-12 scroll-mt-12">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-2">4.9</p>
+        <h3 class="text-2xl font-semibold tracking-tight mb-2 text-zinc-100">Seguimiento Automático</h3>
+        <p class="text-zinc-400 mb-5 text-sm">Doble entrega: lo que está implementado para AL hoy + estructura del feature nativo del bot como referencia para futuros proyectos.</p>
+
+        <!-- Implementado en AL · WF6 -->
+        <div class="rounded-2xl border border-emerald-400/30 bg-emerald-950/15 p-6 mb-4">
+          <div class="flex items-center gap-3 mb-3 flex-wrap">
+            <span class="pill pill-emerald">Implementado en AL</span>
+            <h4 class="text-lg font-semibold text-zinc-100">Vía workflow · WF6</h4>
+            <a href="#wf6" class="ml-auto text-[12px] text-violet-300 hover:underline">→ ver WF6 completo</a>
+          </div>
+          <p class="text-[13px] text-zinc-300 leading-relaxed mb-3">El seguimiento de Atena para AL se hace con un workflow custom (no con el feature nativo del bot). Trigger <code class="font-mono text-emerald-300">Customer Replied</code> + filtro de tags handoff_*, dos Wait Steps (2h y 22h), y dos mensajes de re-engagement firmados por Atena.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="pill pill-violet">2 horas → 1er recordatorio</span>
+            <span class="pill pill-violet">24 horas → 2do recordatorio</span>
+            <span class="pill pill-zinc">Tag follow_up_completado</span>
+          </div>
+        </div>
+
+        <!-- Referencia: feature nativo -->
+        <div class="rounded-2xl border border-cyan-400/25 bg-cyan-950/10 p-6 mb-4">
+          <div class="flex items-center gap-3 mb-4 flex-wrap">
+            <span class="pill pill-cyan">Referencia · feature nativo</span>
+            <h4 class="text-lg font-semibold text-zinc-100">Modal "Seguimiento automático" del bot</h4>
+          </div>
+          <p class="text-[13px] text-zinc-400 leading-relaxed mb-5">GHL trae un feature nativo dentro del bot para automatizar follow-ups sin necesidad de armar workflow. 3 escenarios pre-configurados, secuencia de hasta 5 seguimientos por escenario.</p>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-3">3 escenarios disponibles</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-5">
+            <div class="rounded-lg p-3 bg-zinc-950/60 border border-white/[0.06]">
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <p class="text-sm text-zinc-200 font-medium">El Contacto Dejó de Responder</p>
+                <span class="pill pill-zinc text-[10px]">Apagado</span>
+              </div>
+              <p class="text-[11px] text-zinc-500">Re-contacto si hay silencio del lead.</p>
+            </div>
+            <div class="rounded-lg p-3 bg-zinc-950/60 border border-white/[0.06]">
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <p class="text-sm text-zinc-200 font-medium">El contacto está [...]</p>
+                <span class="pill pill-zinc text-[10px]">Apagado</span>
+              </div>
+              <p class="text-[11px] text-zinc-500">Estado custom (ej: pensándolo, evaluando).</p>
+            </div>
+            <div class="rounded-lg p-3 bg-zinc-950/60 border border-white/[0.06]">
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <p class="text-sm text-zinc-200 font-medium">Solicitud de [...]</p>
+                <span class="pill pill-zinc text-[10px]">Apagado</span>
+              </div>
+              <p class="text-[11px] text-zinc-500">Recordatorio de info pendiente del contacto.</p>
+            </div>
+          </div>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-zinc-500 mb-3">Configuración por escenario</p>
+          <div class="action-card">
+            <div class="action-grid">
+              <div class="label">Habilitar escenario</div>
+              <div class="value-strong">Toggle on/off</div>
+              <div class="label">Nombre del escenario</div>
+              <div class="value-mono">El Contacto Dejó de Responder</div>
+              <div class="label">Secuencia de seguimiento</div>
+              <div class="value-desc">Configurá hasta <strong class="text-zinc-300">5 seguimientos</strong>. Cada uno con:
+                <ul class="mt-2 space-y-1 list-disc list-inside text-[12px] text-zinc-400">
+                  <li>Tiempo: número + Minutos / Horas / Días</li>
+                  <li>Toggle <strong>Permita que la IA envíe el mensaje</strong> (deja al bot generar el copy)</li>
+                  <li>Toggle <strong>Iniciar flujo de trabajo</strong> (dispara un WF en lugar de mensaje)</li>
+                </ul>
+              </div>
+              <div class="label">Configuración global</div>
+              <div class="value-desc">Link en el footer "Configuración de seguimiento" para definir defaults aplicables a los 3 escenarios.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trade-off -->
+        <div class="p-4 rounded-xl bg-amber-950/20 border border-amber-400/20">
+          <p class="text-xs text-amber-200 font-medium mb-2">⚖️ Trade-off · WF6 vs feature nativo</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <div>
+              <p class="text-[12px] text-zinc-300 font-medium mb-1">WF6 (workflow)</p>
+              <ul class="text-[11px] text-zinc-400 space-y-0.5 list-disc list-inside leading-relaxed">
+                <li>Mensajes con copy fijo, controlado</li>
+                <li>If/Else con tags + custom fields</li>
+                <li>Más pasos posibles (tags, notif, etc.)</li>
+                <li>Más fricción para editar tiempos</li>
+              </ul>
+            </div>
+            <div>
+              <p class="text-[12px] text-zinc-300 font-medium mb-1">Feature nativo</p>
+              <ul class="text-[11px] text-zinc-400 space-y-0.5 list-disc list-inside leading-relaxed">
+                <li>Setup rápido en UI del bot</li>
+                <li>IA genera el mensaje (más natural)</li>
+                <li>Hasta 5 seguimientos por escenario</li>
+                <li>Menos lógica condicional disponible</li>
+              </ul>
+            </div>
+          </div>
+          <p class="text-[11px] text-zinc-500 mt-3 leading-relaxed">Para AL elegimos WF6 porque necesitábamos filtrar por tags <code class="font-mono text-amber-300">handoff_*</code> (no disparar follow-up si ya se hizo handoff a humana) — eso lo cubre limpio el workflow. Para clientes con casos más simples, el feature nativo es más ágil.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <footer class="mt-32 pt-8 border-t border-white/[0.06] text-sm text-zinc-500">
+      <p>Blueprint operativo · construido a partir de <a href="../knowledge/bot-atena-v0.md" class="font-mono text-zinc-400 hover:text-violet-300 underline-offset-4 hover:underline">bot-atena-v0.md</a> · complemento del <a href="KICKOFF-VISUAL.html" class="font-mono text-zinc-400 hover:text-violet-300 underline-offset-4 hover:underline">kickoff visual</a></p>
+      <p class="mt-2 text-xs">2026-05-06 · AL Consulting · AL Odontología</p>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // TOC active link highlighting on scroll
+  const sections = document.querySelectorAll('section[id], div[id^="bot-"], div[id^="auto-"]');
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        tocLinks.forEach(link => {
+          link.classList.remove('text-zinc-100', 'border-violet-500/40');
+          if (link.classList.contains('sub')) {
+            link.classList.add('text-zinc-500');
+          } else {
+            link.classList.add('text-zinc-400');
+          }
+          link.classList.add('border-transparent');
+          if (link.getAttribute('href') === '#' + id) {
+            link.classList.add('text-zinc-100', 'border-violet-500/40');
+            link.classList.remove('text-zinc-400', 'text-zinc-500', 'border-transparent');
+          }
+        });
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
