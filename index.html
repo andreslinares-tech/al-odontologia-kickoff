@@ -188,6 +188,7 @@
   <aside class="hidden lg:block w-60 shrink-0 sticky top-0 h-screen pt-20 px-6 overflow-y-auto">
     <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-5">Blueprint · v0</p>
     <nav class="space-y-0.5">
+      <a href="#contexto" class="toc-link block py-2 px-3 text-sm text-zinc-400 border-l border-transparent">00 · Qué hace el bot</a>
       <a href="#pipeline" class="toc-link block py-2 px-3 text-sm text-zinc-400 border-l border-transparent">01 · Pipeline</a>
       <a href="#campos" class="toc-link block py-2 px-3 text-sm text-zinc-400 border-l border-transparent">02 · Campos personalizados</a>
       <a href="#automatizaciones" class="toc-link block py-2 px-3 text-sm text-zinc-400 border-l border-transparent">03 · Automatizaciones</a>
@@ -250,6 +251,112 @@
         <span class="pill pill-emerald">Doble entrega · UI + AI Builder</span>
       </div>
     </header>
+
+    <!-- ============================================================ -->
+    <!-- 00 · QUÉ HACE EL BOT (contexto previo a construir/testear)    -->
+    <!-- ============================================================ -->
+    <section id="contexto" class="mb-24 scroll-mt-12">
+      <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-3">00 · Qué hace el bot</p>
+      <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-3">Contexto del bot Atena</h2>
+      <p class="serif-italic text-zinc-400 mb-8 max-w-3xl">Antes de pegar nada en GHL — qué quiere el cliente que el bot resuelva, qué tiene prohibido hacer y cuándo levanta la mano. Leer esto antes de implementar y antes de testear.</p>
+
+      <!-- Cliente · Identidad · Stack -->
+      <div class="grid md:grid-cols-3 gap-4 mb-10">
+        <div class="action-card">
+          <p class="label mb-2">Cliente</p>
+          <p class="value-strong text-zinc-100 mb-1">AL Odontología</p>
+          <p class="value-desc">Clínica AL · sede única en Neuquén (planta alta). Equipo: Atena (recepción), Stefi, Diego.</p>
+        </div>
+        <div class="action-card">
+          <p class="label mb-2">Identidad del bot</p>
+          <p class="value-strong text-zinc-100 mb-1">Atena · 24/7</p>
+          <p class="value-desc">Mismo nombre que la recepcionista humana — handoff transparente. Tono cercano + profesional, tuteo. No aclara que es IA salvo que pregunten directo.</p>
+        </div>
+        <div class="action-card">
+          <p class="label mb-2">Canal y stack</p>
+          <p class="value-strong text-zinc-100 mb-1">WhatsApp · GHL App Level</p>
+          <p class="value-desc">Conversation AI V2. Coexistencia: Atena humana sigue usando su celular; el bot trabaja en paralelo en el CRM solo para leads que vienen de campañas pagas.</p>
+        </div>
+      </div>
+
+      <!-- Objetivo del bot -->
+      <div class="rounded-3xl border border-white/[0.06] bg-zinc-950/40 p-6 md:p-8 mb-10">
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-3">Objetivo principal</p>
+        <p class="text-zinc-200 text-base leading-relaxed mb-3">Responder consultas <strong class="text-zinc-100">24/7 sin perder leads</strong>, descargar a Atena humana de las FAQs repetitivas (obras sociales, precio de consulta, ubicación) y <strong class="text-zinc-100">calificar pacientes</strong> antes del handoff vía pago de seña.</p>
+        <p class="text-zinc-400 text-sm leading-relaxed serif-italic">El bot <strong class="text-zinc-300 not-italic">no agenda</strong> — Atena humana siempre cierra fecha. El rol del bot es filtrar, informar y entregar el lead caliente.</p>
+      </div>
+
+      <!-- HACE / NO HACE -->
+      <div class="grid md:grid-cols-2 gap-5 mb-10">
+        <!-- HACE -->
+        <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03] p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="pill pill-emerald">✓ Lo que SÍ hace</span>
+          </div>
+          <ul class="space-y-3 text-sm text-zinc-300 leading-relaxed">
+            <li class="flex gap-3"><span class="text-emerald-400/70 font-mono text-[11px] mt-0.5">01</span><span>Saluda al lead nuevo y le pregunta motivo de consulta</span></li>
+            <li class="flex gap-3"><span class="text-emerald-400/70 font-mono text-[11px] mt-0.5">02</span><span>Identifica vertical: <strong class="text-zinc-100">odontología general · armonización facial · implantología</strong> (servicio estrella, 24hs)</span></li>
+            <li class="flex gap-3"><span class="text-emerald-400/70 font-mono text-[11px] mt-0.5">03</span><span>Responde FAQs con la KB: obras sociales, precio de consulta ($40.000 ARS), ubicación parcial, info de tratamientos</span></li>
+            <li class="flex gap-3"><span class="text-emerald-400/70 font-mono text-[11px] mt-0.5">04</span><span>Esquiva pedidos de presupuesto explicando que requiere evaluación + tomografía presencial</span></li>
+            <li class="flex gap-3"><span class="text-emerald-400/70 font-mono text-[11px] mt-0.5">05</span><span>Procesa <strong class="text-zinc-100">audios entrantes</strong> con contexto y responde</span></li>
+            <li class="flex gap-3"><span class="text-emerald-400/70 font-mono text-[11px] mt-0.5">06</span><span>Hace auto follow-up si el lead deja de responder (+2h y +24h)</span></li>
+            <li class="flex gap-3"><span class="text-emerald-400/70 font-mono text-[11px] mt-0.5">07</span><span>Levanta la mano a Atena humana cuando se cumple cualquier condición de handoff</span></li>
+          </ul>
+        </div>
+
+        <!-- NO HACE -->
+        <div class="rounded-2xl border border-rose-500/20 bg-rose-500/[0.03] p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="pill pill-rose">✗ Lo que NO hace</span>
+          </div>
+          <ul class="space-y-3 text-sm text-zinc-300 leading-relaxed">
+            <li class="flex gap-3"><span class="text-rose-400/70 font-mono text-[11px] mt-0.5">01</span><span>No da <strong class="text-zinc-100">precios ni presupuestos de tratamientos</strong> (requiere evaluación clínica + tomografía)</span></li>
+            <li class="flex gap-3"><span class="text-rose-400/70 font-mono text-[11px] mt-0.5">02</span><span>No da la <strong class="text-zinc-100">dirección exacta</strong> (solo Neuquén + planta alta) — la entrega Atena humana al confirmar turno</span></li>
+            <li class="flex gap-3"><span class="text-rose-400/70 font-mono text-[11px] mt-0.5">03</span><span>No <strong class="text-zinc-100">inventa respuestas</strong>: si no sabe algo → handoff a Atena</span></li>
+            <li class="flex gap-3"><span class="text-rose-400/70 font-mono text-[11px] mt-0.5">04</span><span>No <strong class="text-zinc-100">interpreta fotos clínicas</strong>: si llega una imagen → handoff</span></li>
+            <li class="flex gap-3"><span class="text-rose-400/70 font-mono text-[11px] mt-0.5">05</span><span>No <strong class="text-zinc-100">agenda turnos</strong>: cierra fecha siempre Atena humana</span></li>
+            <li class="flex gap-3"><span class="text-rose-400/70 font-mono text-[11px] mt-0.5">06</span><span>No <strong class="text-zinc-100">se activa para pacientes existentes</strong>: solo entra si el lead viene de campaña paga (filtro <code class="font-mono text-rose-200/80 text-[11px] bg-rose-500/10 px-1 rounded">first_name</code> vacío)</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 4 condiciones de handoff -->
+      <div class="rounded-3xl border border-white/[0.06] bg-zinc-950/40 p-6 md:p-8 mb-10">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="pill pill-blue">Bisagra bot → humano</span>
+          <span class="text-xs text-zinc-500 font-mono">4 condiciones de handoff</span>
+        </div>
+        <p class="text-sm text-zinc-400 mb-6 max-w-3xl">El bot deja de operar cuando se dispara cualquiera de estas 4 condiciones. Cada una mueve el lead a <strong class="text-zinc-300">02 · Lead levanta la mano</strong>, asigna a Atena humana y agrega el tag correspondiente.</p>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div class="action-card">
+            <p class="label mb-1">01 · Intención de agendar</p>
+            <p class="value-desc">El paciente quiere reservar turno → Atena humana ofrece fecha y envía alias para la seña.</p>
+          </div>
+          <div class="action-card">
+            <p class="label mb-1">02 · Imagen entrante</p>
+            <p class="value-desc">Llega una foto (muela, radiografía). No interpretamos imágenes clínicas — pasa a Atena.</p>
+          </div>
+          <div class="action-card">
+            <p class="label mb-1">03 · Pregunta fuera de KB</p>
+            <p class="value-desc">El bot no encuentra la respuesta en la base de conocimiento. Prohibido inventar → handoff.</p>
+          </div>
+          <div class="action-card">
+            <p class="label mb-1">04 · Pedido explícito de humano</p>
+            <p class="value-desc">El paciente pide hablar con una persona. Pasa directo a Atena humana.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cómo testear -->
+      <div class="rounded-3xl border border-violet-500/15 bg-violet-500/[0.03] p-6 md:p-8">
+        <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-violet-300/80 mb-3">Cómo usar este blueprint</p>
+        <ul class="space-y-2 text-sm text-zinc-300 leading-relaxed">
+          <li>· <strong class="text-zinc-100">Implementador</strong>: pegá pipeline (01) → custom fields (02) → workflows (03) → bot (04). Cada workflow trae doble entrega: pasos UI manuales + prompt para Workflow AI Builder.</li>
+          <li>· <strong class="text-zinc-100">Tester</strong>: usá esta sección como guion. Cada test debe validar que (a) el bot resuelve solo lo de "Lo que SÍ hace", (b) esquiva todo lo de "Lo que NO hace", (c) dispara handoff exacto en las 4 condiciones.</li>
+          <li>· Casos críticos a probar: pedir presupuesto sin evaluación, mandar foto, preguntar algo fuera de KB, decir "quiero turno", escribir como paciente existente (no debería activar al bot).</li>
+        </ul>
+      </div>
+    </section>
 
     <!-- ============================================================ -->
     <!-- 01 · PIPELINE                                                 -->
