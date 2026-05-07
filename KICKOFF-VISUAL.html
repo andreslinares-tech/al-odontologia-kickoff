@@ -37,6 +37,52 @@
     .pill-cyan { background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); color: rgb(165, 243, 252); }
     .pill-emerald { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: rgb(167, 243, 208); }
     .pill-rose { background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); color: rgb(253, 164, 175); }
+
+    /* Botón "Copiar" para prompt blocks (heredado de BLUEPRINT) */
+    .prompt-block {
+      background: rgba(15, 12, 28, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.18);
+      border-left: 3px solid rgba(139, 92, 246, 0.5);
+      border-radius: 12px;
+      padding: 18px 20px;
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 12px;
+      line-height: 1.65;
+      color: rgb(255, 255, 255);
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .prompt-wrap { position: relative; }
+    .prompt-wrap .prompt-block { padding-top: 42px; }
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      color: rgb(196, 181, 253);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
+      opacity: 0.85;
+      z-index: 2;
+    }
+    .copy-btn:hover { opacity: 1; background: rgba(139, 92, 246, 0.28); }
+    .copy-btn:active { transform: translateY(1px); }
+    .copy-btn.copied {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: rgba(16, 185, 129, 0.5);
+      color: rgb(167, 243, 208);
+      opacity: 1;
+    }
+    .copy-btn svg { width: 13px; height: 13px; }
+    @media print { .copy-btn { display: none; } }
   </style>
 </head>
 <body class="bg-[#26262a] text-white antialiased grain min-h-screen relative">
@@ -746,6 +792,40 @@
     });
   }, { rootMargin: '-30% 0px -60% 0px' });
   sections.forEach(s => observer.observe(s));
+
+  // Botón "Copiar" en cada .prompt-block (prompts y estructuras pegables a GHL)
+  const COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+  const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+  document.querySelectorAll('.prompt-block').forEach(pre => {
+    const wrap = document.createElement('div');
+    wrap.className = 'prompt-wrap';
+    pre.parentNode.insertBefore(wrap, pre);
+    wrap.appendChild(pre);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.title = 'Copiar al portapapeles';
+    btn.setAttribute('aria-label', 'Copiar al portapapeles');
+    btn.innerHTML = COPY_ICON + '<span>Copiar</span>';
+    btn.addEventListener('click', async () => {
+      const text = pre.textContent.trim();
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } finally { document.body.removeChild(ta); }
+      }
+      btn.classList.add('copied');
+      btn.innerHTML = CHECK_ICON + '<span>Copiado</span>';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = COPY_ICON + '<span>Copiar</span>';
+      }, 1800);
+    });
+    wrap.appendChild(btn);
+  });
 </script>
 
 </body>
