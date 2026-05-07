@@ -846,7 +846,7 @@
                 <tr><td>Trigger Filters</td><td><code>Channel = WhatsApp</code> (único canal del bot)</td></tr>
                 <tr><td>Step 1 — If/Else</td><td>Condición: <code>contact.first_name</code> está vacío. Si vacío → lead nuevo · si tiene nombre → paciente existente, salir del WF (no activar bot)</td></tr>
                 <tr><td>Step 2 — Add to Pipeline</td><td>Pipeline: <code>Pipeline AL</code> · Stage: <code>01 · Lead nuevo</code></td></tr>
-                <tr><td>Step 3 — Send Message</td><td>Channel: WhatsApp · Body: <code>Hola {{contact.first_name}} 👋 Gracias por contactarte con clínica AL. ¿Con quién tengo el gusto de hablar? Y contame, ¿en qué te puedo ayudar? 🌷 Atena</code></td></tr>
+                <tr><td>Step 3 — Send WhatsApp Template</td><td>Template: <code>bienvenida_al_lead_nuevo</code> · Vars: <code>{{1}} = {{location.name}}</code> · <code>{{2}} = {{user.first_name}}</code> · ver bloque C abajo</td></tr>
                 <tr><td>Step 4 — Wait</td><td>30 segundos (le da tiempo al paciente para leer y empezar a responder)</td></tr>
                 <tr><td>Step 5 — Update Conversation AI Bot and Status</td><td>Bot: <code>Atena · AL</code> · Status: <code>Active</code></td></tr>
               </tbody>
@@ -858,7 +858,25 @@
           </div>
 
           <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-white mb-2">B · Prompt para Workflow AI Builder</p>
-          <pre class="prompt-block">Crea un workflow llamado WF1 · Lead nuevo entrante. El trigger es Customer Replied con filtro de channel WhatsApp, único canal por donde opera el bot. El primer paso es un If/Else que evalúa si el contacto tiene first_name vacío: si está vacío continúa el flujo (es lead nuevo), si tiene nombre termina el workflow (es paciente existente, no debe activarse el bot). Agrega el contacto al pipeline llamado Pipeline AL en la etapa 01 · Lead nuevo. Envía un mensaje por WhatsApp con el texto: Hola {{contact.first_name}} gracias por contactarte con clínica AL, ¿con quién tengo el gusto de hablar?, y contame en qué te puedo ayudar, firmado por Atena. Espera 30 segundos. Por último ejecuta la acción Update Conversation AI Bot and Status seleccionando el bot Atena · AL y status Active. El propósito es activar al bot Atena solo para contactos nuevos que escriben por WhatsApp, evitando que se active para pacientes regulares que ya están en el CRM. El lead queda en la etapa 01 · Lead nuevo mientras el bot conversa, recién pasa a 02 · Lead levanta la mano cuando el bot dispara un handoff vía WF2 a WF5.</pre>
+          <pre class="prompt-block">Crea un workflow llamado WF1 · Lead nuevo entrante. El trigger es Customer Replied con filtro de channel WhatsApp, único canal por donde opera el bot. El primer paso es un If/Else que evalúa si el contacto tiene first_name vacío: si está vacío continúa el flujo (es lead nuevo), si tiene nombre termina el workflow (es paciente existente, no debe activarse el bot). Agrega el contacto al pipeline llamado Pipeline AL en la etapa 01 · Lead nuevo. Envía un Send WhatsApp Template usando la plantilla bienvenida_al_lead_nuevo a {{contact.phone}}, mapeando la variable {{1}} a {{location.name}} y la variable {{2}} a {{user.first_name}}. Espera 30 segundos. Por último ejecuta la acción Update Conversation AI Bot and Status seleccionando el bot Atena · AL y status Active. El propósito es activar al bot Atena solo para contactos nuevos que escriben por WhatsApp, evitando que se active para pacientes regulares que ya están en el CRM. El lead queda en la etapa 01 · Lead nuevo mientras el bot conversa, recién pasa a 02 · Lead levanta la mano cuando el bot dispara un handoff vía WF2 a WF5.</pre>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-white mb-2">C · Plantilla WhatsApp API · bienvenida_al_lead_nuevo</p>
+          <pre class="prompt-block">─────────────────────────────────────
+PLANTILLA WHATSAPP API
+─────────────────────────────────────
+Nombre: bienvenida_al_lead_nuevo
+Categoría: Utility
+Idioma: Español
+
+Cuerpo:
+Hola, gracias por contactarte con {{1}}. ¿Con quién tengo el gusto de hablar? Contame en qué te puedo ayudar.
+
+Te saluda {{2}}.
+
+Variables:
+{{1}} = {{location.name}} | Ejemplo: "Clínica AL"
+{{2}} = {{user.first_name}} | Ejemplo: "Atena"
+─────────────────────────────────────</pre>
         </div>
       </details>
 
@@ -1017,16 +1035,52 @@
                 <tr><td>Step 1 — If/Else</td><td>Condition: <code>Conversation AI Bot Status = Active</code>. Si no está activo, end</td></tr>
                 <tr><td>Step 2 — Wait Step</td><td>Wait for 2 hours OR Customer Replied</td></tr>
                 <tr><td>Step 3 — If/Else</td><td>¿el paciente respondió en las últimas 2h? Si SÍ → end · si NO → continuar</td></tr>
-                <tr><td>Step 4 — Send Message</td><td>Channel: WhatsApp · Body: <code>Hola {{contact.first_name}}, ¿pudiste pensar lo que charlamos? Cualquier consulta acá estoy 🌷 Atena</code></td></tr>
+                <tr><td>Step 4 — Send WhatsApp Template</td><td>Template: <code>seguimiento_2h_bot_atena</code> · Vars: <code>{{1}} = {{contact.first_name}}</code> · <code>{{2}} = {{user.first_name}}</code> · ver bloque C abajo</td></tr>
                 <tr><td>Step 5 — Wait Step</td><td>Wait for 22 hours OR Customer Replied (total: 2h + 22h = 24h desde el último mensaje)</td></tr>
                 <tr><td>Step 6 — If/Else</td><td>¿respondió? Si SÍ → end · si NO → continuar</td></tr>
-                <tr><td>Step 7 — Send Message</td><td>Body: <code>Hola {{contact.first_name}}, te escribo de nuevo por las dudas. Si seguís interesado en el tratamiento te puedo seguir ayudando. Cualquier cosa, escribime 🌷 Atena</code></td></tr>
+                <tr><td>Step 7 — Send WhatsApp Template</td><td>Template: <code>seguimiento_24h_bot_atena</code> · Vars: <code>{{1}} = {{contact.first_name}}</code> · <code>{{2}} = {{user.first_name}}</code> · ver bloque C abajo</td></tr>
               </tbody>
             </table>
           </div>
 
           <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-white mb-2">B · Prompt para Workflow AI Builder</p>
-          <pre class="prompt-block">Crea un workflow llamado WF6 · Auto follow-up bot Atena. El trigger es Customer Replied con filtro de canal WhatsApp y un filtro adicional que excluye contactos cuyo custom field handoff_motivo no esté vacío, porque si ya se hizo handoff a la humana el follow-up automático no aplica. El primer paso es un If/Else que evalúa si el bot Atena · AL está en status Active para ese contacto: si no está activo termina el workflow. Si está activo, agrega un Wait Step de 2 horas con la opción de salir si el cliente responde. Después de las 2 horas, evalúa con un If/Else si el paciente respondió: si respondió termina el workflow porque la conversación volvió a activarse, si no respondió continúa. Envía un mensaje por WhatsApp con el texto: Hola {{contact.first_name}}, ¿pudiste pensar lo que charlamos? Cualquier consulta acá estoy, firmado por Atena. Después agrega un nuevo Wait Step de 22 horas con salida si responde, totalizando 24 horas desde el último mensaje. Evalúa de nuevo si respondió: si sí termina, si no continúa. Envía un segundo mensaje con el texto: Hola {{contact.first_name}}, te escribo de nuevo por las dudas, si seguís interesado en el tratamiento te puedo seguir ayudando, cualquier cosa escribime, firmado por Atena. El propósito es recuperar leads que no terminaron la conversación con el bot, dándoles dos recordatorios suaves antes de dejarlos en el pipeline pasivo.</pre>
+          <pre class="prompt-block">Crea un workflow llamado WF6 · Auto follow-up bot Atena. El trigger es Customer Replied con filtro de canal WhatsApp y un filtro adicional que excluye contactos cuyo custom field handoff_motivo no esté vacío, porque si ya se hizo handoff a la humana el follow-up automático no aplica. El primer paso es un If/Else que evalúa si el bot Atena · AL está en status Active para ese contacto: si no está activo termina el workflow. Si está activo, agrega un Wait Step de 2 horas con la opción de salir si el cliente responde. Después de las 2 horas, evalúa con un If/Else si el paciente respondió: si respondió termina el workflow porque la conversación volvió a activarse, si no respondió continúa. Envía un Send WhatsApp Template usando la plantilla seguimiento_2h_bot_atena a {{contact.phone}} mapeando {{1}} a {{contact.first_name}} y {{2}} a {{user.first_name}}. Después agrega un nuevo Wait Step de 22 horas con salida si responde, totalizando 24 horas desde el último mensaje. Evalúa de nuevo si respondió: si sí termina, si no continúa. Envía un segundo Send WhatsApp Template usando la plantilla seguimiento_24h_bot_atena a {{contact.phone}} con el mismo mapeo de variables. El propósito es recuperar leads que no terminaron la conversación con el bot, dándoles dos recordatorios suaves antes de dejarlos en el pipeline pasivo.</pre>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-white mb-2">C · Plantilla WhatsApp API · seguimiento_2h_bot_atena</p>
+          <pre class="prompt-block">─────────────────────────────────────
+PLANTILLA WHATSAPP API
+─────────────────────────────────────
+Nombre: seguimiento_2h_bot_atena
+Categoría: Utility
+Idioma: Español
+
+Cuerpo:
+Hola {{1}}, ¿pudiste pensar lo que charlamos? Cualquier consulta acá estoy.
+
+Te saluda {{2}}.
+
+Variables:
+{{1}} = {{contact.first_name}} | Ejemplo: "María"
+{{2}} = {{user.first_name}} | Ejemplo: "Atena"
+─────────────────────────────────────</pre>
+
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em] text-white mb-2">D · Plantilla WhatsApp API · seguimiento_24h_bot_atena</p>
+          <pre class="prompt-block">─────────────────────────────────────
+PLANTILLA WHATSAPP API
+─────────────────────────────────────
+Nombre: seguimiento_24h_bot_atena
+Categoría: Utility
+Idioma: Español
+
+Cuerpo:
+Hola {{1}}, te escribo de nuevo por las dudas. Si seguís interesado en el tratamiento te puedo seguir ayudando. Cualquier cosa, escribime.
+
+Te saluda {{2}}.
+
+Variables:
+{{1}} = {{contact.first_name}} | Ejemplo: "María"
+{{2}} = {{user.first_name}} | Ejemplo: "Atena"
+─────────────────────────────────────</pre>
 
           <div class="mt-5 p-4 rounded-xl bg-amber-950/20 border border-amber-400/20">
             <p class="text-xs text-amber-200 font-medium mb-1">⚠️ Trade-off del trigger Customer Replied</p>
@@ -1210,7 +1264,7 @@
 
         <div class="mt-4 p-4 rounded-xl bg-amber-950/20 border border-amber-400/20">
           <p class="text-xs text-amber-200 font-medium mb-1">⚠️ Initial Message vacío — importante</p>
-          <p class="text-[12px] text-white leading-relaxed">El mensaje de bienvenida lo dispara <a href="#wf1" class="text-amber-300 hover:underline">WF1</a> como Send Message antes de activar el bot. Si lo ponés en ambos lados, el contacto recibe el saludo dos veces.</p>
+          <p class="text-[12px] text-white leading-relaxed">El mensaje de bienvenida lo dispara <a href="#wf1" class="text-amber-300 hover:underline">WF1</a> como Send WhatsApp Template (<code class="font-mono">bienvenida_al_lead_nuevo</code>) antes de activar el bot. Si lo ponés en ambos lados, el contacto recibe el saludo dos veces.</p>
         </div>
       </div>
 
